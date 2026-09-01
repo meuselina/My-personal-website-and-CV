@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<script src="./translations.js"></script>
+<script src="./newsletter-issues.js"></script>
+<script>
+  // Fonts werden erst NACH dem window-load-Event injiziert: ein haengender
+  // CDN-Abruf kann das load-Event so nie blockieren (Fonts swappen per FOUT ein).
+  (function () {
+    var inject = function () {
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Mrs+Saint+Delafield&display=swap';
+      document.head.appendChild(l);
+    };
+    if (document.readyState === 'complete') inject();
+    else window.addEventListener('load', inject);
+  })();
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #0b0b0d; color: #f4f3ef; font-family: 'Inter', sans-serif; line-height: 1.6; }
+  a { color: #f4f3ef; text-decoration: none; }
+  a:hover { color: var(--acc, #e10600); }
+  ::selection { background: var(--acc, #e10600); color: #0b0b0d; }
+  @keyframes pulse { 0%, 100% { opacity: 1; scale: 1; } 50% { opacity: 0.35; scale: 0.75; } }
+</style>
+</helmet>
+
+<header id="site-header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 20; background: rgba(11, 11, 13, 0.72); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(244, 243, 239, 0.08); transition: background 0.35s, backdrop-filter 0.35s, border-color 0.35s; pointer-events: none;">
+  <nav style="display: flex; align-items: center; gap: clamp(0.6rem, 2vw, 1.4rem); padding: 1.1rem clamp(0.8rem, 3vw, 2rem); flex-wrap: nowrap; pointer-events: none;">
+    <a href="Selina Portfolio.dc.html" data-navpill="" style="font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.08em; color: var(--acc, #e10600); pointer-events: auto; transition: background 0.35s, border-color 0.35s; padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(244, 243, 239, 0.14);">SM</a>
+    <a href="Agents.dc.html" data-navpill="keepborder" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f4f3ef; margin-left: auto; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.45rem 1.1rem; transition: border-color 0.25s, color 0.25s, background 0.35s; pointer-events: auto; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px);" style-hover="color: var(--acc, #e10600); border-color: var(--acc, #e10600);"><span aria-hidden="true" style="font-size: 1rem; line-height: 1;">←</span><span data-mobilelabel="">Back to the agents</span></a>
+    <div data-navpill="keepborder" style="display: flex; align-items: center; gap: 2px; border: 1px solid rgba(244, 243, 239, 0.25); border-radius: 999px; padding: 3px; flex-shrink: 0; white-space: nowrap; pointer-events: auto; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px);">
+      <button id="lang-en" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: #f4f3ef; color: #0b0b0d;">EN</button>
+      <button id="lang-de" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: transparent; color: #9a9aa0;">DE</button>
+      <button id="lang-zh" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: transparent; color: #9a9aa0;">中文</button>
+    </div>
+  </nav>
+</header>
+
+<main style="position: relative; z-index: 1; overflow-x: clip; padding-top: 4.4rem;">
+
+  <section data-screen-label="Newsletter Hero" style="max-width: 900px; margin: 0 auto; padding: clamp(4rem, 10vh, 7rem) clamp(1.2rem, 5vw, 2.5rem) clamp(2.5rem, 6vh, 4rem); text-align: center;">
+    <p style="display: inline-flex; align-items: center; gap: 0.55rem; margin: 0 0 1.5rem; padding: 0.5rem 1.1rem; border-radius: 999px; border: 1px solid rgba(244, 243, 239, 0.25); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: #d9d8d4;"><span aria-hidden="true" style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Agent 01 · Weekly Newsletter Agent</p>
+    <h1 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2.8rem, 9vw, 6rem); line-height: 0.95; margin: 0;">The Weekly <span style="color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">Brief</span></h1>
+    <p style="max-width: 56ch; margin: clamp(1.5rem, 4vh, 2.2rem) auto 0; color: #b9b9be; font-size: 1.05rem;">A personal summary of the week's events around the world, researched across many sources and condensed into one readable issue: so you quickly know what is happening in world politics, explained in plain language. Published autonomously every week, in English and German.</p>
+  </section>
+
+  <section data-screen-label="Newsletter Signup" style="max-width: 700px; margin: 0 auto; padding: 0 clamp(1.2rem, 5vw, 2.5rem) clamp(3rem, 7vh, 5rem);">
+    <div style="display: flex; flex-direction: column; gap: 0.8rem; padding: clamp(1.2rem, 3vw, 1.8rem); background: #141416; border: 1px solid rgba(244, 243, 239, 0.12);">
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.06em; font-size: 1rem;">Sign up for the weekly newsletter</span>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+        <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9a9aa0;">Choose your edition</span>
+        <button id="nl-ed-en" style="cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; background: transparent; color: #9a9aa0;">English edition</button>
+        <button id="nl-ed-de" style="cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; background: transparent; color: #9a9aa0;">German edition</button>
+      </div>
+      <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+        <input id="nl-email" type="email" placeholder="your@email.com" style="flex: 1; min-width: 180px; background: #0b0b0d; border: 1px solid rgba(244, 243, 239, 0.25); color: #f4f3ef; padding: 0.7rem 0.9rem; font-family: 'Inter', sans-serif; font-size: 0.95rem; border-radius: 4px;">
+        <button id="nl-subscribe" style="border: none; cursor: pointer; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.95rem; background: var(--acc, #e10600); color: #f4f3ef; padding: 0.7rem 1.4rem; border-radius: 4px;">Subscribe</button>
+      </div>
+      <span id="nl-msg" data-no-i18n="true" style="font-size: 0.8rem; color: #2ecc71; min-height: 1.2em;"></span>
+      <span style="font-size: 0.78rem; color: #77777d;">Your signup goes straight to the agent: it adds your address to its distribution list and includes you in the next issue.</span>
+    </div>
+  </section>
+
+  <section data-screen-label="Newsletter Issues" style="max-width: 760px; margin: 0 auto; padding: 0 clamp(1.2rem, 5vw, 2.5rem) clamp(5rem, 12vh, 8rem);">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-bottom: 2px solid var(--acc, #e10600); padding-bottom: 0.8rem; margin-bottom: 0.5rem;">
+      <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.4rem, 3vw, 2rem); margin: 0;">All issues</h2>
+      <span style="font-size: 0.78rem; color: #77777d;">The latest issue and the three before it, updated every week.</span>
+    </div>
+    <sc-for list="{{ issues }}" as="issue" hint-placeholder-count="1">
+      <article data-issue-index="{{ $index }}" style="border-bottom: 1px solid rgba(244, 243, 239, 0.1); padding: clamp(2rem, 5vh, 3rem) 0;">
+        <span data-nl-latest="" style="display: inline-block; margin-bottom: 1.1rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--acc, #e10600); border-radius: 999px; padding: 0.3rem 0.8rem; color: var(--acc, #e10600);">Latest issue</span>
+        <button data-nl-toggle="" style="display: none; width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; padding: 0; font-family: 'Inter', sans-serif; color: #f4f3ef; align-items: baseline; gap: 0.8rem; justify-content: space-between;">
+          <span data-no-i18n="true" data-nl-lang="en" data-nl-display="inline" style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.15rem; letter-spacing: 0.03em;">{{ issue.date.en }} · {{ issue.title.en }}</span>
+          <span data-no-i18n="true" data-nl-lang="de" data-nl-display="inline" style="display: none; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.15rem; letter-spacing: 0.03em;">{{ issue.date.de }} · {{ issue.title.de }}</span>
+          <span data-nl-chevron="" aria-hidden="true" style="color: var(--acc, #e10600); font-size: 1rem;">▸</span>
+        </button>
+        <div data-no-i18n="true" data-nl-lang="en" style="display: flex; flex-direction: column; gap: 1.1rem;">
+          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--acc, #e10600);">{{ issue.date.en }}</span>
+          <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.1; margin: 0;">{{ issue.title.en }}</h3>
+          <sc-for list="{{ issue.sections }}" as="sec" hint-placeholder-count="2">
+            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <h4 style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; margin: 0; color: #f4f3ef;">{{ sec.heading.en }}</h4>
+              <p style="margin: 0; color: #b9b9be; font-size: 0.98rem;">{{ sec.body.en }}</p>
+            </div>
+          </sc-for>
+          <sc-if value="{{ issue.url }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ issue.url }}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f4f3ef; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.45rem 1.1rem; transition: border-color 0.25s, color 0.25s;" style-hover="color: var(--acc, #e10600); border-color: var(--acc, #e10600);">Read the full issue →</a>
+          </sc-if>
+        </div>
+        <div data-no-i18n="true" data-nl-lang="de" style="display: none; flex-direction: column; gap: 1.1rem;">
+          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--acc, #e10600);">{{ issue.date.de }}</span>
+          <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.1; margin: 0;">{{ issue.title.de }}</h3>
+          <sc-for list="{{ issue.sections }}" as="sec" hint-placeholder-count="2">
+            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <h4 style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; margin: 0; color: #f4f3ef;">{{ sec.heading.de }}</h4>
+              <p style="margin: 0; color: #b9b9be; font-size: 0.98rem;">{{ sec.body.de }}</p>
+            </div>
+          </sc-for>
+          <sc-if value="{{ issue.url }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ issue.url }}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f4f3ef; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.45rem 1.1rem; transition: border-color 0.25s, color 0.25s;" style-hover="color: var(--acc, #e10600); border-color: var(--acc, #e10600);">Ganze Ausgabe lesen →</a>
+          </sc-if>
+        </div>
+      </article>
+    </sc-for>
+  </section>
+
+</main>
+
+<footer style="text-align: center; padding: 2.5rem 2rem; color: #55555a; font-size: 0.8rem; border-top: 1px solid rgba(244, 243, 239, 0.08);">
+  <p style="margin: 0;">© 2026 Selina Meusel · <a href="Selina Portfolio.dc.html" style="color: #9a9aa0;">Back to portfolio</a></p>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    // Aktuelle Ausgabe plus die letzten drei
+    return { issues: (window.SM_NEWSLETTER || []).slice(0, 4) };
+  }
+
+
+  _bindHeader() {
+    const h = document.getElementById('site-header');
+    if (!h || h.dataset.hdrBound) return;
+    h.dataset.hdrBound = '1';
+    const pills = [...h.querySelectorAll('[data-navpill]')];
+    const apply = () => {
+      const s = window.scrollY > 40;
+      h.style.background = s ? 'transparent' : 'rgba(11, 11, 13, 0.72)';
+      h.style.backdropFilter = s ? 'none' : 'blur(10px)';
+      h.style.borderBottom = s ? '1px solid transparent' : '1px solid rgba(244, 243, 239, 0.08)';
+      for (const p of pills) {
+        p.style.background = s ? 'rgba(11, 11, 13, 0.6)' : 'transparent';
+        p.style.backdropFilter = s ? 'blur(8px)' : 'none';
+        if (p.dataset.navpill !== 'keepborder') p.style.borderColor = s ? 'rgba(244, 243, 239, 0.14)' : 'transparent';
+      }
+    };
+    apply();
+    window.addEventListener('scroll', apply, { passive: true });
+  }
+
+
+  _bindMobileNav() {
+    const labels = [...document.querySelectorAll('[data-mobilelabel]')];
+    const apply = () => {
+      const small = window.innerWidth < 620;
+      for (const el of labels) el.style.display = small ? 'none' : 'inline';
+    };
+    apply();
+    if (!this._navResizeBound) {
+      this._navResizeBound = true;
+      window.addEventListener('resize', apply);
+    }
+  }
+
+  componentDidMount() {
+    this._bindHeader();
+    this._bindMobileNav();
+    setTimeout(() => this._bindMobileNav(), 600);
+    // Ausgaben nachrendern, falls newsletter-issues.js beim ersten Render noch nicht geladen war
+    let tries = 0;
+    const poll = () => {
+      if (window.SM_NEWSLETTER) {
+        if (!this._issuesShown) { this._issuesShown = true; this.forceUpdate(); }
+        setTimeout(() => this._bindArchive(), 100);
+      } else if (++tries < 25) setTimeout(poll, 200);
+    };
+    poll();
+    this._applyLang();
+    this._paintLangButtons();
+    this._bindLangButtons();
+    this._bindSignup();
+    setTimeout(() => { this._applyLang(); this._paintLangButtons(); this._bindLangButtons(); this._bindSignup(); this._bindArchive(); }, 600);
+  }
+
+  componentDidUpdate() {
+    this._scheduleLang();
+    this._bindSignup();
+    setTimeout(() => this._bindArchive(), 100);
+  }
+
+  _getLang() {
+    if (!this._lang) {
+      let saved = 'en';
+      try { saved = localStorage.getItem('sm-lang') || 'en'; } catch (e) {}
+      this._lang = saved;
+    }
+    return this._lang;
+  }
+
+  _setLang(l) {
+    this._lang = l;
+    try { localStorage.setItem('sm-lang', l); } catch (e) {}
+    setTimeout(() => {
+      this._applyLang();
+      this._paintLangButtons();
+    }, 0);
+  }
+
+  _bindLangButtons() {
+    [['lang-en', 'en'], ['lang-de', 'de'], ['lang-zh', 'zh']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el || el.dataset.langBound) return;
+      el.dataset.langBound = '1';
+      el.addEventListener('click', () => this._setLang(l));
+    });
+  }
+
+  _paintLangButtons() {
+    const lang = this._getLang();
+    [['lang-en', 'en'], ['lang-de', 'de'], ['lang-zh', 'zh']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.background = lang === l ? '#f4f3ef' : 'transparent';
+      el.style.color = lang === l ? '#0b0b0d' : '#9a9aa0';
+    });
+  }
+
+  _scheduleLang() {
+    if (this._langTimer) return;
+    this._langTimer = setTimeout(() => {
+      this._langTimer = null;
+      this._applyLang();
+    }, 50);
+  }
+
+  _applyLang() {
+    if (this._langApplying) return;
+    const dict = window.SM_I18N;
+    if (!dict) { this._langRetries = (this._langRetries || 0) + 1; if (this._langRetries < 50) setTimeout(() => this._applyLang(), 200); return; }
+    this._langApplying = true;
+    try {
+      this._applyLangInner(dict);
+    } finally {
+      this._langApplying = false;
+    }
+  }
+
+  _applyLangInner(dict) {
+    const lang = this._getLang();
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang;
+    if (!this._i18nNodes) this._i18nNodes = new Map();
+    const translateIn = (root) => {
+      const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = tw.nextNode())) {
+        if (node.parentElement && node.parentElement.closest('[data-no-i18n]')) continue;
+        let en = this._i18nNodes.get(node);
+        if (en === undefined) {
+          const key = (node.nodeValue || '').trim();
+          if (key && dict[key]) {
+            en = key;
+            this._i18nNodes.set(node, key);
+          } else {
+            continue;
+          }
+        }
+        const entry = dict[en];
+        const txt = lang === 'en' ? en : (entry && entry[lang]) || en;
+        const m = (node.nodeValue || '').match(/^(\s*)[\s\S]*?(\s*)$/);
+        const next = (m ? m[1] : '') + txt + (m ? m[2] : '');
+        if ((node.nodeValue || '') !== next) node.nodeValue = next;
+      }
+    };
+    // Regionen zum Uebersetzen kurz aus dem DOM aushaengen (wenige childList-
+    // statt hunderter characterData-Mutationen, verhindert Beobachter-Stalls)
+    const regions = [...document.querySelectorAll('header, main > *')];
+    for (const region of regions) {
+      const parent = region.parentNode;
+      if (!parent) continue;
+      const anchor = region.nextSibling;
+      parent.removeChild(region);
+      try { translateIn(region); } finally { parent.insertBefore(region, anchor); }
+    }
+    translateIn(document.body);
+    document.querySelectorAll('[placeholder]').forEach((el) => {
+      const key = el.dataset.i18nPlaceholder || el.getAttribute('placeholder');
+      if (!el.dataset.i18nPlaceholder) el.dataset.i18nPlaceholder = key;
+      const entry = dict[key];
+      el.setAttribute('placeholder', lang === 'en' ? key : (entry && entry[lang]) || key);
+    });
+    this._applyIssueLang();
+  }
+
+  // Ausgaben-Inhalt folgt der Seitensprache: DE zeigt die deutsche Version, EN/中文 die englische.
+  // Aeltere Ausgaben (Index > 0) sind eingeklappt, bis ihre Kopfzeile angeklickt wird.
+  _applyIssueLang() {
+    const l = this._getLang() === 'de' ? 'de' : 'en';
+    document.querySelectorAll('[data-nl-lang]').forEach((el) => {
+      const article = el.closest('[data-issue-index]');
+      const idx = article ? parseInt(article.dataset.issueIndex, 10) || 0 : 0;
+      const open = !article || idx === 0 || article.dataset.open === '1';
+      const show = el.dataset.nlLang === l && (open || el.dataset.nlDisplay === 'inline');
+      el.style.display = show ? (el.dataset.nlDisplay || 'flex') : 'none';
+    });
+  }
+
+  _bindArchive() {
+    document.querySelectorAll('[data-issue-index]').forEach((article) => {
+      const idx = parseInt(article.dataset.issueIndex, 10) || 0;
+      const tag = article.querySelector('[data-nl-latest]');
+      const btn = article.querySelector('[data-nl-toggle]');
+      if (tag) tag.style.display = idx === 0 ? 'inline-block' : 'none';
+      if (!btn) return;
+      if (idx === 0) { btn.style.display = 'none'; return; }
+      btn.style.display = 'flex';
+      if (article.dataset.open === undefined) article.dataset.open = '0';
+      if (!btn.dataset.togBound) {
+        btn.dataset.togBound = '1';
+        btn.addEventListener('click', () => {
+          article.dataset.open = article.dataset.open === '1' ? '0' : '1';
+          const ch = btn.querySelector('[data-nl-chevron]');
+          if (ch) ch.textContent = article.dataset.open === '1' ? '▾' : '▸';
+          this._applyIssueLang();
+        });
+      }
+    });
+    this._applyIssueLang();
+  }
+
+  _getEdition() {
+    if (!this._edition) {
+      let saved = null;
+      try { saved = localStorage.getItem('sm-nl-edition'); } catch (e) {}
+      this._edition = saved || (this._getLang() === 'de' ? 'de' : 'en');
+    }
+    return this._edition;
+  }
+
+  _paintEdition() {
+    const ed = this._getEdition();
+    [['nl-ed-en', 'en'], ['nl-ed-de', 'de']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.background = ed === l ? '#f4f3ef' : 'transparent';
+      el.style.color = ed === l ? '#0b0b0d' : '#9a9aa0';
+      el.style.borderColor = ed === l ? '#f4f3ef' : 'rgba(244, 243, 239, 0.3)';
+    });
+  }
+
+  _bindSignup() {
+    [['nl-ed-en', 'en'], ['nl-ed-de', 'de']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el || el.dataset.edBound) return;
+      el.dataset.edBound = '1';
+      el.addEventListener('click', () => {
+        this._edition = l;
+        try { localStorage.setItem('sm-nl-edition', l); } catch (e) {}
+        this._paintEdition();
+      });
+    });
+    this._paintEdition();
+    const btn = document.getElementById('nl-subscribe');
+    if (btn && !btn.dataset.subBound) {
+      btn.dataset.subBound = '1';
+      btn.addEventListener('click', () => this._subscribe());
+    }
+  }
+
+  _subscribe() {
+    const T = (s) => {
+      const lang = this._getLang();
+      const d = window.SM_I18N;
+      return (lang !== 'en' && d && d[s] && d[s][lang]) || s;
+    };
+    const msgEl = document.getElementById('nl-msg');
+    const say = (text, ok) => {
+      if (!msgEl) return;
+      msgEl.textContent = text;
+      msgEl.style.color = ok ? '#2ecc71' : '#e10600';
+    };
+    const inp = document.getElementById('nl-email');
+    const val = inp ? inp.value.trim().toLowerCase() : '';
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val)) {
+      say(T('Please enter a valid email address.'), false);
+      return;
+    }
+    let subs = [];
+    try { subs = JSON.parse(localStorage.getItem('sm-newsletter-subs') || '[]'); } catch (e) {}
+    if (subs.includes(val)) {
+      say(T('This address is already signed up.'), false);
+      return;
+    }
+    const ed = this._getEdition();
+    const subject = 'NEWSLETTER SIGNUP: ' + val;
+    const body = 'action: subscribe\nlist: weekly-newsletter\nemail: ' + val + '\nlanguage: ' + ed + '\nsource: portfolio-website\n\n(Automated signup from The Weekly Brief page. Add this address to the newsletter distribution list.)';
+    window.location.href = 'mailto:selina.meusel@icloud.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    try { localStorage.setItem('sm-newsletter-subs', JSON.stringify(subs.concat(val))); } catch (e) {}
+    if (inp) inp.value = '';
+    say(T('Almost done: send the pre-filled email and the agent adds you to the next issue.'), true);
+  }
+}
+</script>
+</body>
+</html>

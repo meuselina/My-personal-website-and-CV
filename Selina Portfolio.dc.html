@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<script src="./translations.js"></script>
+<script>
+  // Externe Ressourcen (Fonts, three.js) werden erst NACH dem window-load-Event
+  // injiziert: ein haengender CDN-Abruf kann das load-Event so nie blockieren
+  // (_setup3D pollt auf window.THREE; Fonts swappen per FOUT ein).
+  (function () {
+    var inject = function () {
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Mrs+Saint+Delafield&display=swap';
+      document.head.appendChild(l);
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      document.head.appendChild(s);
+    };
+    if (document.readyState === 'complete') inject();
+    else window.addEventListener('load', inject);
+  })();
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #0b0b0d; color: #f4f3ef; font-family: 'Inter', sans-serif; line-height: 1.6; }
+  a { color: #f4f3ef; text-decoration: none; }
+  a:hover { color: var(--acc, #e10600); }
+  ::selection { background: var(--acc, #e10600); color: #0b0b0d; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  @keyframes popIn { from { opacity: 0; scale: 0.4; } to { opacity: 1; scale: 1; } }
+  @keyframes pulse { 0%, 100% { opacity: 1; scale: 1; } 50% { opacity: 0.35; scale: 0.75; } }
+</style>
+</helmet>
+
+<header id="site-header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 20; background: rgba(11, 11, 13, 0.72); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(244, 243, 239, 0.08); transition: background 0.35s, backdrop-filter 0.35s, border-color 0.35s; pointer-events: none;">
+  <nav style="display: flex; align-items: center; gap: clamp(0.6rem, 2vw, 1.4rem); padding: 1.1rem clamp(0.8rem, 3vw, 2rem); flex-wrap: nowrap; pointer-events: none;">
+    <a href="#home" data-navpill="" style="font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.08em; color: var(--acc, #e10600); pointer-events: auto; transition: background 0.35s, border-color 0.35s; padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(244, 243, 239, 0.14);">SM</a>
+    <div id="nav-links" data-navpill="" style="display: flex; gap: clamp(0.4rem, 1.2vw, 1rem); flex-wrap: nowrap; overflow: hidden; min-width: 0; flex-shrink: 1; margin-left: auto; pointer-events: auto; padding: 0.45rem 0.7rem; border-radius: 999px; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(244, 243, 239, 0.14);">
+      <a href="#about" style="font-size: clamp(0.6rem, 0.85vw, 0.72rem); text-transform: uppercase; letter-spacing: 0.05em; color: #d9d8d4; white-space: nowrap; flex-shrink: 0; pointer-events: auto;" style-hover="color: var(--acc, #e10600);">About</a>
+      <a href="#motivation" style="font-size: clamp(0.6rem, 0.85vw, 0.72rem); text-transform: uppercase; letter-spacing: 0.05em; color: #d9d8d4; white-space: nowrap; flex-shrink: 0; pointer-events: auto;" style-hover="color: var(--acc, #e10600);">Motivation</a>
+      <a href="#experience" style="font-size: clamp(0.6rem, 0.85vw, 0.72rem); text-transform: uppercase; letter-spacing: 0.05em; color: #d9d8d4; white-space: nowrap; flex-shrink: 0; pointer-events: auto;" style-hover="color: var(--acc, #e10600);">Experience</a>
+      <a href="#agents" style="font-size: clamp(0.6rem, 0.85vw, 0.72rem); text-transform: uppercase; letter-spacing: 0.05em; color: #d9d8d4; white-space: nowrap; flex-shrink: 0; pointer-events: auto;" style-hover="color: var(--acc, #e10600);">AI Agents</a>
+      <a href="#project" style="font-size: clamp(0.6rem, 0.85vw, 0.72rem); text-transform: uppercase; letter-spacing: 0.05em; color: #d9d8d4; white-space: nowrap; flex-shrink: 0; pointer-events: auto;" style-hover="color: var(--acc, #e10600);">Project</a>
+      <a href="#interests" style="font-size: clamp(0.6rem, 0.85vw, 0.72rem); text-transform: uppercase; letter-spacing: 0.05em; color: #d9d8d4; white-space: nowrap; flex-shrink: 0; pointer-events: auto;" style-hover="color: var(--acc, #e10600);">Interests</a>
+      <a href="#socials" style="font-size: clamp(0.6rem, 0.85vw, 0.72rem); text-transform: uppercase; letter-spacing: 0.05em; color: #d9d8d4; white-space: nowrap; flex-shrink: 0; pointer-events: auto;" style-hover="color: var(--acc, #e10600);">Socials</a>
+      <a href="#contact" style="font-size: clamp(0.6rem, 0.85vw, 0.72rem); text-transform: uppercase; letter-spacing: 0.05em; color: #d9d8d4; white-space: nowrap; flex-shrink: 0; pointer-events: auto;" style-hover="color: var(--acc, #e10600);">Contact</a>
+    </div>
+    <button id="nav-toggle" data-no-i18n="true" aria-label="Menu" style="display: none; align-items: center; gap: 0.4rem; margin-left: auto; cursor: pointer; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem; color: #f4f3ef; padding: 0.45rem 1rem; border-radius: 999px; border: 1px solid rgba(244, 243, 239, 0.25); background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px); pointer-events: auto; flex-shrink: 0;">Menu</button>
+    <div data-navpill="keepborder" style="display: flex; align-items: center; gap: 2px; border: 1px solid rgba(244, 243, 239, 0.25); border-radius: 999px; padding: 3px; flex-shrink: 0; white-space: nowrap; pointer-events: auto; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px);">
+      <button id="lang-en" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: #f4f3ef; color: #0b0b0d;">EN</button>
+      <button id="lang-de" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: transparent; color: #9a9aa0;">DE</button>
+      <button id="lang-zh" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: transparent; color: #9a9aa0;">中文</button>
+    </div>
+    <div id="nav-panel" style="display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; padding: 0.6rem clamp(0.8rem, 3vw, 2rem) 1.2rem; background: rgba(11, 11, 13, 0.96); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(244, 243, 239, 0.12); pointer-events: auto;"></div>
+  </nav>
+  <div id="scroll-progress" aria-hidden="true" style="position: absolute; left: 0; bottom: -2px; height: 2px; width: 100%; background: var(--acc, #e10600); transform: scaleX(0); transform-origin: left;"></div>
+</header>
+
+<div id="model3d" aria-hidden="true" style="position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0;"></div>
+
+<main style="position: relative; z-index: 1; overflow-x: clip;">
+
+  <section id="home" data-screen-label="Hero" style="position: relative; height: 340vh;">
+    <div id="hero-stage" style="position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; justify-content: center;">
+
+      <canvas id="bg-canvas" aria-hidden="true" style="position: absolute; inset: 0; z-index: 2; pointer-events: none;"></canvas>
+
+      <div id="name-marquee" aria-hidden="true" style="position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); display: flex; flex-direction: column; gap: clamp(1rem, 3.5vh, 2.5rem); z-index: 0; opacity: 0; pointer-events: none; user-select: none;">
+        <div style="overflow: hidden;">
+          <div style="display: flex; width: max-content; animation: marquee 24s linear infinite;">
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: #f4f3ef;">Selina&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Meusel&nbsp;·&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: #f4f3ef;">Selina&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Meusel&nbsp;·&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: #f4f3ef;">Selina&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Meusel&nbsp;·&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: #f4f3ef;">Selina&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Meusel&nbsp;·&nbsp;</span>
+          </div>
+        </div>
+        <div style="overflow: hidden;">
+          <div style="display: flex; width: max-content; animation: marquee 24s linear infinite reverse;">
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Selina&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: #f4f3ef;">Meusel&nbsp;·&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Selina&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: #f4f3ef;">Meusel&nbsp;·&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Selina&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: #f4f3ef;">Meusel&nbsp;·&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Selina&nbsp;</span>
+            <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(4rem, 11vw, 9rem); line-height: 0.9; white-space: nowrap; color: #f4f3ef;">Meusel&nbsp;·&nbsp;</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="portrait" style="position: absolute; left: 0; right: 0; bottom: 0; margin-inline: auto; width: 100vw; height: 100vh; z-index: 1; overflow: hidden; cursor: crosshair; will-change: width, height;">
+        <div style="position: absolute; inset: 0; box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);">
+          <img src="assets/portrait_full_bw.jpg" alt="Portrait of Selina Meusel" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 22%; filter: contrast(1.03);">
+          <canvas id="portrait-color-canvas" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+        </div>
+      </div>
+
+      <sc-if value="{{ showStickers }}" hint-placeholder-val="{{ true }}">
+        <div id="stickers" aria-hidden="true" style="position: absolute; inset: 0; z-index: 4; pointer-events: none;">
+          <div class="sticker" data-depth="0.05" data-mobile="keep" style="position: absolute; top: 24%; left: 10%; opacity: 0; animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;">
+            <div style="display: inline-block; rotate: -7deg; animation: floaty 7s ease-in-out infinite; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.06em; font-size: 1rem; background: var(--acc, #e10600); color: #f4f3ef; padding: 0.5rem 1.1rem; border-radius: 999px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);">Software Engineering × AI</div>
+          </div>
+          <div class="sticker" data-depth="0.11" data-mobile="hide" style="position: absolute; top: 38%; right: 8%; opacity: 0; animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.45s forwards;">
+            <div style="display: inline-block; rotate: 5deg; animation: floaty 5.5s ease-in-out -2s infinite; background: #f4f3ef; color: #17171a; padding: 0.8rem 1.2rem; border-radius: 6px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);">
+              <span style="display: block; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.2rem; line-height: 1.1;">Stanford</span>
+              <span style="display: block; font-size: 0.72rem; color: #55555a; letter-spacing: 0.04em;">Tech Leadership ’25</span>
+            </div>
+          </div>
+          <div class="sticker" data-depth="0.09" data-mobile="keep" style="position: absolute; top: 42%; left: 4%; opacity: 0; animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.52s forwards;">
+            <div style="display: inline-block; rotate: -4deg; animation: floaty 6s ease-in-out -1.5s infinite; background: #f4f3ef; color: #17171a; padding: 0.8rem 1.2rem; border-radius: 6px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);">
+              <span style="display: block; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.2rem; line-height: 1.1;">CODE University</span>
+              <span style="display: block; font-size: 0.72rem; color: #55555a; letter-spacing: 0.04em;">B.Sc. Software Engineering, Berlin</span>
+            </div>
+          </div>
+          <div class="sticker" data-depth="0.08" data-mobile="keep" style="position: absolute; top: 62%; left: 12%; opacity: 0; animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;">
+            <div style="display: inline-block; rotate: 4deg; animation: floaty 6.5s ease-in-out -1s infinite; font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.08em; color: #f4f3ef; border: 2px solid #f4f3ef; padding: 0.35rem 0.9rem;">BER ⇄ SF</div>
+          </div>
+          <div class="sticker" data-depth="0.13" data-mobile="hide" style="position: absolute; top: 72%; right: 13%; opacity: 0; animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.75s forwards;">
+            <div style="display: inline-block; rotate: -5deg; animation: floaty 5s ease-in-out -3s infinite; font-size: 0.8rem; letter-spacing: 0.08em; color: #f4f3ef; border: 1px solid rgba(244, 243, 239, 0.4); border-radius: 999px; padding: 0.35rem 0.9rem; background: rgba(244, 243, 239, 0.08); backdrop-filter: blur(4px);">DE · EN · 中文 · ES</div>
+          </div>
+          <div class="sticker" data-depth="0.16" data-mobile="keep" style="position: absolute; top: 17%; right: 24%; opacity: 0; color: var(--acc, #e10600); animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s forwards;">
+            <div style="display: inline-block; animation: floaty 8s ease-in-out -4s infinite;">
+              <svg viewBox="0 0 40 40" width="40" height="40" style="display: block;"><path d="M20 0 L24 16 L40 20 L24 24 L20 40 L16 24 L0 20 L16 16 Z" fill="currentColor"></path></svg>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <div id="signature" style="position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%) rotate(-5deg); z-index: 5; width: min(82vw, 760px); opacity: 0; pointer-events: none; user-select: none; will-change: transform, opacity; filter: drop-shadow(0 4px 30px rgba(0, 0, 0, 0.5));">
+        <svg viewBox="0 0 640 200" style="width: 100%; height: auto; display: block; overflow: visible;">
+          <defs>
+            <mask id="sig-mask">
+              <path id="sig-mask-path" d="M24,120 C56,72 88,152 124,114 C156,82 188,152 222,114 C254,80 286,152 320,114 C352,82 384,152 418,114 C450,80 482,152 516,114 C548,82 584,144 620,110" fill="none" stroke="#ffffff" stroke-width="140" stroke-linecap="round"></path>
+            </mask>
+          </defs>
+          <text x="320" y="132" text-anchor="middle" font-family="Mrs Saint Delafield, cursive" font-size="104" fill="var(--acc, #e10600)" mask="url(#sig-mask)">Selina Meusel</text>
+        </svg>
+      </div>
+
+      <p id="hero-tagline" style="position: absolute; bottom: 1.8rem; z-index: 4; color: #d9d8d4; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.18em; text-align: center; width: 100%; margin: 0; text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);">Software Engineering <strong style="color: var(--acc, #e10600);">×</strong> Artificial Intelligence · Berlin / San Francisco</p>
+
+      <p id="hero-badge" style="position: absolute; top: 5.2rem; left: 50%; transform: translateX(-50%); z-index: 4; display: flex; align-items: center; gap: 0.55rem; margin: 0; padding: 0.5rem 1.1rem; border-radius: 999px; background: rgba(11, 11, 13, 0.55); backdrop-filter: blur(6px); border: 1px solid rgba(244, 243, 239, 0.25); font-size: 0.78rem; letter-spacing: 0.06em; color: #f4f3ef; white-space: nowrap; max-width: 92vw;"><span aria-hidden="true" style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite; flex-shrink: 0;"></span><span style="overflow: hidden; text-overflow: ellipsis;">Open to internships. Currently building AI agents and websites</span></p>
+
+    </div>
+  </section>
+
+  <div aria-hidden="true" data-skew="" style="position: relative; z-index: 2; background: var(--acc, #e10600); rotate: -1.5deg; scale: 1.05; overflow: hidden; padding: 0.65rem 0; margin: -1rem 0 0;">
+    <div style="display: flex; width: max-content; animation: marquee 110s linear infinite;">
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.3rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Software Engineering × AI · Berlin ⇄ San Francisco · Strategy ·&nbsp;</span>
+    </div>
+  </div>
+
+  <section id="statement" data-screen-label="Statement" aria-label="Personal statement" style="max-width: 1150px; margin: 0 auto; padding: clamp(10rem, 26vh, 18rem) clamp(1.2rem, 5vw, 2.5rem) 0; text-align: center;">
+    <p data-reveal="" style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2.2rem, 7vw, 5rem); line-height: 1.05; margin: 0;">Understand <em style="font-style: normal; color: var(--acc, #e10600);">people</em> first.<br><span style="color: transparent; -webkit-text-stroke: 2px #f4f3ef;">Build second.</span></p>
+    <p data-reveal="right" aria-hidden="true" style="font-family: 'Mrs Saint Delafield', cursive; font-size: clamp(2.2rem, 5vw, 3.5rem); color: #9a9aa0; margin: 1.2rem 0 0; rotate: -3deg;">Selina Meusel</p>
+  </section>
+
+  <section id="about" data-screen-label="About" style="max-width: 1150px; margin: 0 auto; padding: clamp(10rem, 26vh, 19rem) clamp(1.2rem, 5vw, 2.5rem) clamp(6rem, 14vh, 10rem); scroll-margin-top: 4rem;">
+    <div data-reveal="left" data-parallax="0.06" style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: clamp(1.5rem, 4vh, 2.5rem);">
+      <span style="font-family: 'Anton', sans-serif; color: var(--acc, #e10600); font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.1em;">01</span>
+      <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2.6rem, 8vw, 5.5rem); line-height: 0.95; margin: 0;">About</h2>
+    </div>
+    <p data-reveal="" style="font-size: clamp(1.3rem, 3vw, 2rem); line-height: 1.35; font-weight: 500; max-width: 24ch; margin: 0 0 clamp(2.5rem, 6vh, 4rem); color: #f4f3ef;">"I build software, and I study the people it is built for."</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: rgba(244, 243, 239, 0.12); border: 1px solid rgba(244, 243, 239, 0.12);">
+      <div data-reveal="scale" style="background: #0b0b0d; padding: clamp(1.4rem, 3vw, 2.2rem);">
+        <span style="display: block; font-family: 'Anton', sans-serif; font-size: clamp(3rem, 6vw, 4.5rem); line-height: 1; color: var(--acc, #e10600);">03</span>
+        <span style="display: block; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0; margin-top: 0.6rem;">Cities</span><span style="display: block; font-size: 0.95rem; margin-top: 0.2rem;">Hannover ⇄ San Francisco ⇄ Berlin</span>
+        
+      </div>
+      <div data-reveal="scale" style="background: #0b0b0d; padding: clamp(1.4rem, 3vw, 2.2rem);">
+        <span style="display: block; font-family: 'Anton', sans-serif; font-size: clamp(3rem, 6vw, 4.5rem); line-height: 1; color: var(--acc, #e10600);">04</span>
+        <span style="display: block; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0; margin-top: 0.6rem;">Languages</span>
+        <span style="display: block; font-size: 0.95rem; margin-top: 0.2rem;">DE · EN · 中文 · ES</span>
+      </div>
+      <div data-reveal="scale" style="background: #0b0b0d; padding: clamp(1.4rem, 3vw, 2.2rem);">
+        <span style="display: block; font-family: 'Anton', sans-serif; font-size: clamp(3rem, 6vw, 4.5rem); line-height: 1; color: var(--acc, #e10600);">01</span>
+        <span style="display: block; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0; margin-top: 0.6rem;">Focus</span>
+        <span style="display: block; font-size: 0.95rem; margin-top: 0.2rem;">Code × human behavior</span>
+      </div>
+    </div>
+    <p data-reveal="" style="max-width: 70ch; color: #b9b9be; margin: clamp(2.5rem, 6vh, 4rem) 0 0; font-size: 1.05rem;">I’m a German student drawn to the questions that live between disciplines. My interest in computer science started at fifteen, when I began reading books about it on my own, and it grew in my advanced computer science course at school. It is also the reason I started learning Chinese: computer science carries enormous weight in the Chinese market, and I wanted a way to stand out. That interest came back to life during my year in San Francisco, where I taught myself to design and build AI systems from scratch. Today I study Software Engineering at CODE University of Applied Sciences in Berlin. People pulled me in from another direction: a year working as an au pair showed me first-hand how deeply a parent’s patterns shape the child they raise, and I wanted to understand why. Alongside that, I spent time supporting a psychology coaching practice, which gave me a close look at how people actually communicate and decide. I didn’t choose between people and technology. I chose to understand how they explain each other.</p>
+  </section>
+
+  <section id="stats" data-screen-label="Stats" aria-label="Key numbers" style="border-top: 1px solid rgba(244, 243, 239, 0.1); border-bottom: 1px solid rgba(244, 243, 239, 0.1); background: #101013;">
+    <div style="max-width: 1150px; margin: 0 auto; padding: clamp(2.5rem, 6vh, 4rem) clamp(1.2rem, 5vw, 2.5rem); display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: clamp(1.5rem, 4vw, 3rem);">
+      <div style="display: flex; flex-direction: column; gap: 0.4rem; text-align: center;">
+        <span class="stat-number" data-target="4" style="font-family: 'Anton', sans-serif; font-size: clamp(3.5rem, 7vw, 5.5rem); line-height: 1; color: var(--acc, #e10600);">0</span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">AI agents built &amp; running</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.4rem; text-align: center;">
+        <span class="stat-number" data-target="4" style="font-family: 'Anton', sans-serif; font-size: clamp(3.5rem, 7vw, 5.5rem); line-height: 1; color: var(--acc, #e10600);">0</span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">Languages spoken</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.4rem; text-align: center;">
+        <span class="stat-number" data-target="2" style="font-family: 'Anton', sans-serif; font-size: clamp(3.5rem, 7vw, 5.5rem); line-height: 1; color: var(--acc, #e10600);">0</span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">Continents lived &amp; worked on</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.4rem; text-align: center;">
+        <span class="stat-number" data-target="3" style="font-family: 'Anton', sans-serif; font-size: clamp(3.5rem, 7vw, 5.5rem); line-height: 1; color: var(--acc, #e10600);">0</span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">Cities called home</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="motivation" data-screen-label="Motivation" style="max-width: 1150px; margin: 0 auto; padding: clamp(9rem, 22vh, 15rem) clamp(1.2rem, 5vw, 2.5rem); scroll-margin-top: 4rem;">
+    <div data-reveal="left" data-parallax="0.06" style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: clamp(1.5rem, 4vh, 2.5rem);">
+      <span style="font-family: 'Anton', sans-serif; color: var(--acc, #e10600); font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.1em;">02</span>
+      <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2.6rem, 8vw, 5.5rem); line-height: 0.95; margin: 0;">Motivation</h2>
+    </div>
+    <p data-reveal="" style="font-size: clamp(1.3rem, 3vw, 2rem); line-height: 1.35; font-weight: 500; max-width: 26ch; margin: 0 0 clamp(2rem, 5vh, 3rem); color: #f4f3ef;">The best technology is built by people who have paid attention to humans first.</p>
+    <p data-reveal="" style="max-width: 70ch; color: #b9b9be; margin: 0; font-size: 1.05rem;">I used to think human behavior and software sat at opposite ends of a spectrum: one about understanding people, the other about building systems. The more I worked with both, the less that divide made sense. The software I build only works when it is shaped around how a real person thinks, hesitates, and decides. And what fascinates me about people, from how children are shaped by their parents to how anyone decides under pressure, keeps pointing back to structure and behavior that technology can help reveal. Studying Software Engineering puts me close enough to build the answers. The questions still come from people.</p>
+  </section>
+
+  <section id="experience" data-screen-label="Experience" style="padding: clamp(9rem, 22vh, 15rem) 0; scroll-margin-top: 4rem;">
+    <div style="max-width: 1150px; margin: 0 auto; padding: 0 clamp(1.2rem, 5vw, 2.5rem);">
+      <div data-reveal="left" data-parallax="0.06" style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: clamp(1.5rem, 4vh, 2.5rem);">
+        <span style="font-family: 'Anton', sans-serif; color: var(--acc, #e10600); font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.1em;">03</span>
+        <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2.6rem, 8vw, 5.5rem); line-height: 0.95; margin: 0;">Experience</h2>
+        <span aria-hidden="true" style="margin-left: auto; color: #55555a; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;">Scroll →</span>
+      </div>
+    </div>
+    <div style="display: flex; gap: clamp(1rem, 2.5vw, 1.5rem); overflow-x: auto; scroll-snap-type: x mandatory; padding: 0.5rem max(calc((100vw - 1150px) / 2 + clamp(1.2rem, 5vw, 2.5rem)), 1.2rem) 1.5rem; scrollbar-width: none;">
+      <article data-reveal="" style="scroll-snap-align: start; flex: 0 0 min(420px, 84vw); background: #141416; border: 1px solid rgba(244, 243, 239, 0.1); padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.9rem; min-height: 300px;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 2rem; color: var(--acc, #e10600); line-height: 1;">2026 →</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.5rem; line-height: 1.15; margin: 0;">B.Sc. Software Engineering</h3>
+        <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; color: #9a9aa0;">CODE University of Applied Sciences, Berlin · Since 2026</span>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Project-based computer science: software architecture, interaction design, and building products end to end.</p>
+      </article>
+      <article data-reveal="" style="scroll-snap-align: start; flex: 0 0 min(420px, 84vw); background: #141416; border: 1px solid rgba(244, 243, 239, 0.1); padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.9rem; min-height: 300px;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 2rem; color: var(--acc, #e10600); line-height: 1;">2026</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.5rem; line-height: 1.15; margin: 0;">AI Workflow Automation</h3>
+        <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; color: #9a9aa0;">Independent Project · San Francisco</span>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Designed and built 4 AI agents on Claude that run day-to-day operations: automated newsletter, email triage, daily research, and to-do delivery, all on defined schedules, without manual intervention. Owned the full system architecture, prompt design, and quality assurance.</p>
+      </article>
+      <article data-reveal="" style="scroll-snap-align: start; flex: 0 0 min(420px, 84vw); background: #141416; border: 1px solid rgba(244, 243, 239, 0.1); padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.9rem; min-height: 300px;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 2rem; color: var(--acc, #e10600); line-height: 1;">2026</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.5rem; line-height: 1.15; margin: 0;">Practice Assistant</h3>
+        <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; color: #9a9aa0;">Olivia Byza, Psychology Coaching · San Francisco</span>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Hands-on insight into client communication in a professional coaching context. Researched potential partner organizations and contributed to social media and booklet concepts, alongside building the automated workflows.</p>
+      </article>
+      <article data-reveal="" style="scroll-snap-align: start; flex: 0 0 min(420px, 84vw); background: #141416; border: 1px solid rgba(244, 243, 239, 0.1); padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.9rem; min-height: 300px;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 2rem; color: var(--acc, #e10600); line-height: 1;">2025–26</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.5rem; line-height: 1.15; margin: 0;">Cross-Cultural Year</h3>
+        <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; color: #9a9aa0;">Culture Care, Au Pair · San Francisco</span>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Lived and worked at the center of Silicon Valley’s startup ecosystem, building relationships with early-stage AI founders while developing independence and intercultural competence in a fully international environment.</p>
+      </article>
+      <article data-reveal="" style="scroll-snap-align: start; flex: 0 0 min(420px, 84vw); background: #141416; border: 1px solid rgba(244, 243, 239, 0.1); padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.9rem; min-height: 300px;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 2rem; color: var(--acc, #e10600); line-height: 1;">2025</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.5rem; line-height: 1.15; margin: 0;">Technology Leadership Certificate</h3>
+        <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; color: #9a9aa0;">Stanford University, Continuing Studies · Oct–Nov 2025</span>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Six-week program on digital transformation, technology strategy, and data-driven decision-making, with exposure to software architecture and platform strategy, exchanging perspectives with guest faculty and Silicon Valley industry leaders.</p>
+      </article>
+      <article data-reveal="" style="scroll-snap-align: start; flex: 0 0 min(420px, 84vw); background: #141416; border: 1px solid rgba(244, 243, 239, 0.1); padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.9rem; min-height: 300px;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 2rem; color: var(--acc, #e10600); line-height: 1;">2023</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.5rem; line-height: 1.15; margin: 0;">Architecture Internship</h3>
+        <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; color: #9a9aa0;">sp.a Schulze &amp; Partner Architektur · Germany</span>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">One-week internship covering the full arc of architectural practice: structural planning and construction, site visits to ongoing builds, and training in technical drawing. As a capstone, independently developed, designed, and furnished a penthouse concept from the ground up.</p>
+      </article>
+      <article data-reveal="" style="scroll-snap-align: start; flex: 0 0 min(420px, 84vw); background: #141416; border: 1px solid rgba(244, 243, 239, 0.1); padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.9rem; min-height: 300px;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 2rem; color: var(--acc, #e10600); line-height: 1;">2022</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.5rem; line-height: 1.15; margin: 0;">Academic Exchange</h3>
+        <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; color: #9a9aa0;">Boarding School · New York, NY · Jul–Aug 2022</span>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Intensive philosophy course on diversity, equity, and belonging in society, completed with top marks (A+), while living alongside students from over a dozen countries, an early encounter with the intercultural psychology I’d return to in San Francisco.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="agents" data-screen-label="AI Agents" style="max-width: 1150px; margin: 0 auto; padding: clamp(9rem, 22vh, 15rem) clamp(1.2rem, 5vw, 2.5rem); scroll-margin-top: 4rem;">
+    <div data-reveal="left" data-parallax="0.06" style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: clamp(1.2rem, 3vh, 2rem);">
+      <span style="font-family: 'Anton', sans-serif; color: var(--acc, #e10600); font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.1em;">04</span>
+      <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2.6rem, 8vw, 5.5rem); line-height: 0.95; margin: 0;">AI Agents · Hall of Fame</h2>
+    </div>
+    <p data-reveal="" style="max-width: 62ch; color: #b9b9be; margin: 0 0 clamp(2rem, 5vh, 3rem); font-size: 1.05rem;">Four autonomous agents, designed and built from scratch on Claude. Each one runs on its own schedule, every day, without manual intervention. <span>A fifth one is next in line.</span></p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1px; background: #0b0b0d; border: 1px solid rgba(244, 243, 239, 0.12);">
+      <article data-reveal="scale" style="background: #0b0b0d; padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.8rem; box-shadow: 0 0 0 1px rgba(244, 243, 239, 0.12);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">01</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.35rem; line-height: 1.15; margin: 0;">Newsletter Agent</h3>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #2ecc71;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Active since April 2026</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Drafts, formats, and schedules the newsletter end to end, from content structure to consistent tone of voice.</p>
+      </article>
+      <article data-reveal="scale" style="background: #0b0b0d; padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.8rem; box-shadow: 0 0 0 1px rgba(244, 243, 239, 0.12);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">02</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.35rem; line-height: 1.15; margin: 0;">Email Triage Agent</h3>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #2ecc71;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Active since April 2026</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Reads the inbox, sorts messages by urgency and topic, and prepares suggested replies, turning a daily chore into a two-minute review.</p>
+      </article>
+      <article data-reveal="scale" style="background: #0b0b0d; padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.8rem; box-shadow: 0 0 0 1px rgba(244, 243, 239, 0.12);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">03</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.35rem; line-height: 1.15; margin: 0;">Research Agent</h3>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #2ecc71;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Active since April 2026</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Delivers a daily research briefing on psychology and coaching topics, condensed into key insights you can act on immediately.</p>
+      </article>
+      <article data-reveal="scale" style="background: #0b0b0d; padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.8rem; box-shadow: 0 0 0 1px rgba(244, 243, 239, 0.12);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">04</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.35rem; line-height: 1.15; margin: 0;">To-Do Delivery System</h3>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #2ecc71;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Active since April 2026</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">Collects open tasks from multiple sources like emails and calendar entries and delivers a prioritized to-do list on a fixed schedule.</p>
+      </article>
+      <article data-reveal="scale" style="background: #0b0b0d; padding: clamp(1.6rem, 3vw, 2.4rem); display: flex; flex-direction: column; gap: 0.8rem; box-shadow: 0 0 0 1px rgba(244, 243, 239, 0.12);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">05</span>
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.35rem; line-height: 1.15; margin: 0;">Jarvis</h3>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #e8b93c;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; border: 1px solid #e8b93c;"></span>Next project</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 0.98rem;">A voice-first assistant that thinks for itself: it researches, drafts, remembers, suggests, works in the background, operates the computer, and starts projects of its own.</p>
+      </article>
+    </div>
+    <div data-reveal="" style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: clamp(2rem, 5vh, 3rem);">
+      <a href="Agents.dc.html" onClick="{{ rememberScroll }}" style="display: inline-block; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.1rem; background: var(--acc, #e10600); color: #f4f3ef; padding: 0.9rem 2.2rem; transition: scale 0.25s, background 0.25s;" style-hover="scale: 1.05; color: #f4f3ef;">Find Out More →</a>
+      <a href="Newsletter.dc.html" onClick="{{ rememberScroll }}" style="display: inline-block; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.1rem; border: 1px solid rgba(244, 243, 239, 0.35); color: #f4f3ef; padding: 0.9rem 2.2rem; transition: scale 0.25s, border-color 0.25s, color 0.25s;" style-hover="scale: 1.05; color: var(--acc, #e10600); border-color: var(--acc, #e10600);">Weekly Newsletter →</a>
+    </div>
+  </section>
+
+  <section id="project" data-screen-label="Current Project" style="max-width: 1150px; margin: 0 auto; padding: clamp(9rem, 22vh, 15rem) clamp(1.2rem, 5vw, 2.5rem); scroll-margin-top: 4rem;">
+    <div data-reveal="left" data-parallax="0.06" style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: clamp(1.2rem, 3vh, 2rem);">
+      <span style="font-family: 'Anton', sans-serif; color: var(--acc, #e10600); font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.1em;">05</span>
+      <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2.6rem, 8vw, 5.5rem); line-height: 0.95; margin: 0;">Current Project</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(2rem, 5vw, 4rem); align-items: start;">
+      <div data-reveal="" style="display: flex; flex-direction: column; gap: 1.1rem;">
+        <h3 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.1; margin: 0;">From Floor Plan to Printed Page</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Architecture</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">3D &amp; Editorial</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid #e8b93c; border-radius: 999px; padding: 0.3rem 0.8rem; color: #e8b93c;">In progress</span>
+        </div>
+        <p style="color: #b9b9be; margin: 0; font-size: 1.05rem;">A tool for architects that turns construction drawings into 3D models and then into layouts ready to be printed in a magazine. What used to be days of manual modelling and page setup becomes a process that runs largely on its own.</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1.05rem;"><strong style="color: #f4f3ef;">The hard part is accuracy.</strong> Architects work to the millimetre, and a plan carries information that no summary may lose: dimensions, materials, load-bearing structure, and the intent behind a drawing. Automation only earns its place here if the result holds up to that level of scrutiny, which makes precision the actual product, not a detail of it.</p>
+      </div>
+      <div data-reveal="scale" style="aspect-ratio: 4 / 3; background: #141416; border: 1px solid rgba(244, 243, 239, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem;">
+        <span aria-hidden="true" style="width: 58px; height: 58px; border: 2px dashed rgba(244, 243, 239, 0.4);"></span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">In development</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="interests" data-screen-label="Interests" style="max-width: 1150px; margin: 0 auto; padding: clamp(9rem, 22vh, 15rem) clamp(1.2rem, 5vw, 2.5rem); scroll-margin-top: 4rem;">
+    <div data-reveal="left" data-parallax="0.06" style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: clamp(1.5rem, 4vh, 2.5rem);">
+      <span style="font-family: 'Anton', sans-serif; color: var(--acc, #e10600); font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.1em;">06</span>
+      <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2.6rem, 8vw, 5.5rem); line-height: 0.95; margin: 0;">Interests</h2>
+    </div>
+    <div data-reveal="" style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: clamp(2rem, 5vh, 3rem);">
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.1rem, 2.5vw, 1.6rem); letter-spacing: 0.04em; border: 2px solid #f4f3ef; padding: 0.5rem 1.2rem;">Child &amp; Adolescent Development</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.1rem, 2.5vw, 1.6rem); letter-spacing: 0.04em; border: 2px solid #f4f3ef; padding: 0.5rem 1.2rem;">Software Engineering &amp; System Design</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.1rem, 2.5vw, 1.6rem); letter-spacing: 0.04em; border: 2px solid #f4f3ef; padding: 0.5rem 1.2rem;">AI &amp; Autonomous Agent Systems</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.1rem, 2.5vw, 1.6rem); letter-spacing: 0.04em; border: 2px solid #f4f3ef; padding: 0.5rem 1.2rem;">Intercultural Psychology</span>
+    </div>
+    <div data-reveal="" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: rgba(244, 243, 239, 0.12); border: 1px solid rgba(244, 243, 239, 0.12);">
+      <div style="background: #0b0b0d; padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: 0.15rem;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 1.3rem;">Deutsch</span>
+        <span style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--acc, #e10600);">Native</span>
+      </div>
+      <div style="background: #0b0b0d; padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: 0.15rem;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 1.3rem;">English</span>
+        <span style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--acc, #e10600);">C1</span>
+      </div>
+      <div style="background: #0b0b0d; padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: 0.15rem;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 1.3rem;">中文</span>
+        <span style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--acc, #e10600);">B1</span>
+      </div>
+      <div style="background: #0b0b0d; padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: 0.15rem;">
+        <span style="font-family: 'Anton', sans-serif; font-size: 1.3rem;">Español</span>
+        <span style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--acc, #e10600);">A2</span>
+      </div>
+    </div>
+  </section>
+
+  
+
+  <section id="socials" data-screen-label="Socials" style="max-width: 1300px; margin: 0 auto; padding: clamp(10rem, 26vh, 19rem) clamp(1.2rem, 5vw, 2.5rem); scroll-margin-top: 4rem;">
+    <div data-reveal="" style="text-align: center; margin-bottom: clamp(2.5rem, 6vh, 4rem);">
+      <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(3rem, 9vw, 6.5rem); line-height: 0.95; margin: 0;">What’s Up</h2>
+      <p style="font-family: 'Inter', sans-serif; font-weight: 300; text-transform: uppercase; letter-spacing: 0.35em; font-size: clamp(1rem, 2.4vw, 1.6rem); color: #d9d8d4; margin: 0.7rem 0 0;">On The Socials</p>
+    </div>
+    
+    <div data-reveal="" style="display: flex; justify-content: center; align-items: flex-end; padding: 1.5rem 0 3rem; width: 809px; max-width: 100%; height: 227px; margin: 0 auto">
+      <div style="position: relative; z-index: 1; width: clamp(100px, 15vw, 240px); aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: #141416; border: 1px solid rgba(244, 243, 239, 0.15); box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5); rotate: -12deg; translate: 0 38px; transition: rotate 0.35s, translate 0.35s, scale 0.35s;" style-hover="rotate: 0deg; translate: 0 -18px; scale: 1.07; z-index: 30;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="social-4" shape="rect" placeholder="Foto hier ablegen" hint-size="100%,100%" style="width: 100%; height: 100%;"></x-import>
+      </div>
+      <div style="position: relative; z-index: 2; margin-left: -36px; width: clamp(100px, 15vw, 240px); aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: #141416; border: 1px solid rgba(244, 243, 239, 0.15); box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5); rotate: -8deg; translate: 0 20px; transition: rotate 0.35s, translate 0.35s, scale 0.35s;" style-hover="rotate: 0deg; translate: 0 -18px; scale: 1.07; z-index: 30;">
+        <img src="assets/social_2.jpg" alt="Selina on socials" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+      </div>
+      <div style="position: relative; z-index: 3; margin-left: -36px; width: clamp(100px, 15vw, 240px); aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: #141416; border: 1px solid rgba(244, 243, 239, 0.15); box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5); rotate: -4deg; translate: 0 8px; transition: rotate 0.35s, translate 0.35s, scale 0.35s;" style-hover="rotate: 0deg; translate: 0 -18px; scale: 1.07; z-index: 30;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="social-5" shape="rect" placeholder="Foto hier ablegen" hint-size="100%,100%" style="width: 100%; height: 100%;"></x-import>
+      </div>
+      <div style="position: relative; z-index: 10; margin-left: -36px; width: clamp(100px, 15vw, 240px); aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: #141416; border: 1px solid rgba(244, 243, 239, 0.15); box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5); rotate: 0deg; translate: 0 -10px; scale: 1.08; transition: rotate 0.35s, translate 0.35s, scale 0.35s;" style-hover="translate: 0 -24px; scale: 1.14; z-index: 30;">
+        <img src="assets/social_1.jpg" alt="Selina on socials" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+      </div>
+      <div style="position: relative; z-index: 3; margin-left: -36px; width: clamp(100px, 15vw, 240px); aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: #141416; border: 1px solid rgba(244, 243, 239, 0.15); box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5); rotate: 4deg; translate: 0 8px; transition: rotate 0.35s, translate 0.35s, scale 0.35s;" style-hover="rotate: 0deg; translate: 0 -18px; scale: 1.07; z-index: 30;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="social-6" shape="rect" placeholder="Foto hier ablegen" hint-size="100%,100%" style="width: 100%; height: 100%;"></x-import>
+      </div>
+      <div style="position: relative; z-index: 2; margin-left: -36px; width: clamp(100px, 15vw, 240px); aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: #141416; border: 1px solid rgba(244, 243, 239, 0.15); box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5); rotate: 8deg; translate: 0 20px; transition: rotate 0.35s, translate 0.35s, scale 0.35s;" style-hover="rotate: 0deg; translate: 0 -18px; scale: 1.07; z-index: 30;">
+        <img src="assets/social_3.jpg" alt="Selina on socials" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+      </div>
+      <div style="position: relative; z-index: 1; margin-left: -36px; width: clamp(100px, 15vw, 240px); aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden; background: #141416; border: 1px solid rgba(244, 243, 239, 0.15); box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5); rotate: 12deg; translate: 0 38px; transition: rotate 0.35s, translate 0.35s, scale 0.35s;" style-hover="rotate: 0deg; translate: 0 -18px; scale: 1.07; z-index: 30;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="social-7" shape="rect" placeholder="Foto hier ablegen" hint-size="100%,100%" style="width: 100%; height: 100%;"></x-import>
+      </div>
+    </div><p data-reveal="" style="text-align: center; font-weight: 300; font-size: clamp(0.95rem, 2vw, 1.15rem); color: #d9d8d4; margin: 0; letter-spacing: 0.05em;">Instagram: <a href="https://www.instagram.com/meuselina_/" target="_blank" rel="noopener" style="font-weight: 300; border-bottom: 1px solid var(--acc, #e10600);">meuselina_</a><span style="display: inline-block; width: 2.5rem;"></span>LinkedIn: <a href="https://www.linkedin.com/in/selinameusel" target="_blank" rel="noopener" style="font-weight: 300; border-bottom: 1px solid var(--acc, #e10600);">Selina Meusel</a></p>
+  </section><section id="contact" data-screen-label="Contact" style="max-width: 1150px; margin: 0 auto; padding: clamp(10rem, 26vh, 19rem) clamp(1.2rem, 5vw, 2.5rem) clamp(6rem, 14vh, 10rem); scroll-margin-top: 4rem;">
+    <span data-reveal="" style="display: block; font-family: 'Anton', sans-serif; color: var(--acc, #e10600); font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.1em; margin-bottom: 0.8rem;">07 · Contact</span>
+    <a data-reveal="" href="mailto:selina.meusel@icloud.com" style="display: block; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(3rem, 11vw, 9rem); line-height: 0.95; color: transparent; -webkit-text-stroke: 2px #f4f3ef;" style-hover="color: var(--acc, #e10600); -webkit-text-stroke: 2px var(--acc, #e10600);">LET’S CONNECT</a>
+    <div data-reveal="" style="display: flex; flex-wrap: wrap; gap: clamp(1rem, 4vw, 3rem); margin-top: clamp(2rem, 5vh, 3rem);">
+      <a href="mailto:selina.meusel@icloud.com" style="font-size: clamp(1rem, 2.2vw, 1.3rem); border-bottom: 2px solid var(--acc, #e10600); padding-bottom: 0.2rem;">selina.meusel@icloud.com</a>
+      
+    </div>
+  </section>
+
+</main>
+
+<footer style="position: relative; z-index: 1; text-align: center; padding: 2.5rem 2rem; color: #55555a; font-size: 0.8rem; border-top: 1px solid rgba(244, 243, 239, 0.08);">
+  <p style="margin: 0;">© 2026 Selina Meusel · Berlin ⇄ San Francisco</p>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#e10600&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#e10600&quot;, &quot;#ff7a00&quot;, &quot;#3b6cff&quot;]},
+  &quot;dotGrid&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;},
+  &quot;stickers&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;}
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const lang = this._getLang();
+    const setLang = (l) => this._setLang(l);
+    const bg = (l) => (lang === l ? '#f4f3ef' : 'transparent');
+    const col = (l) => (lang === l ? '#0b0b0d' : '#9a9aa0');
+    return {
+      showStickers: this.props.stickers ?? true,
+      rememberScroll: () => {
+        try { sessionStorage.setItem('sm-portfolio-scroll', String(window.scrollY)); } catch (e) {}
+      },
+      setLangEn: () => setLang('en'),
+      setLangDe: () => setLang('de'),
+      setLangZh: () => setLang('zh'),
+      langEnBg: bg('en'), langEnColor: col('en'),
+      langDeBg: bg('de'), langDeColor: col('de'),
+      langZhBg: bg('zh'), langZhColor: col('zh'),
+    };
+  }
+
+  _applyLang() {
+    if (this._langApplying) return;
+    const dict = window.SM_I18N;
+    if (!dict) { this._langRetries = (this._langRetries || 0) + 1; if (this._langRetries < 50) setTimeout(() => this._applyLang(), 200); return; }
+    this._langApplying = true;
+    try {
+      this._applyLangInner(dict);
+    } finally {
+      this._langApplying = false;
+    }
+  }
+
+  _applyLangInner(dict) {
+    const lang = this._getLang();
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang;
+    if (!this._i18nNodes) this._i18nNodes = new Map();
+    const translateIn = (root) => {
+      const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = tw.nextNode())) {
+        let en = this._i18nNodes.get(node);
+        if (en === undefined) {
+          const key = (node.nodeValue || '').trim();
+          if (key && dict[key]) {
+            en = key;
+            this._i18nNodes.set(node, key);
+          } else {
+            continue;
+          }
+        }
+        const entry = dict[en];
+        const txt = lang === 'en' ? en : (entry && entry[lang]) || en;
+        const m = (node.nodeValue || '').match(/^(\s*)[\s\S]*?(\s*)$/);
+        const next = (m ? m[1] : '') + txt + (m ? m[2] : '');
+        if ((node.nodeValue || '') !== next) node.nodeValue = next;
+      }
+    };
+    // Translate each region while it is DETACHED from the document: outside
+    // observers then see a few childList records instead of hundreds of
+    // characterData mutations (which caused multi-second main-thread stalls).
+    const regions = [...document.querySelectorAll('header, main > *')];
+    for (const region of regions) {
+      const parent = region.parentNode;
+      if (!parent) continue;
+      const anchor = region.nextSibling;
+      parent.removeChild(region);
+      try { translateIn(region); } finally { parent.insertBefore(region, anchor); }
+    }
+    translateIn(document.body);
+  }
+
+
+  _bindHeader() {
+    const h = document.getElementById('site-header');
+    if (!h || h.dataset.hdrBound) return;
+    h.dataset.hdrBound = '1';
+    const pills = [...h.querySelectorAll('[data-navpill]')];
+    const apply = () => {
+      const s = window.scrollY > 40;
+      h.style.background = s ? 'transparent' : 'rgba(11, 11, 13, 0.72)';
+      h.style.backdropFilter = s ? 'none' : 'blur(10px)';
+      h.style.borderBottom = s ? '1px solid transparent' : '1px solid rgba(244, 243, 239, 0.08)';
+      for (const p of pills) {
+        p.style.background = s ? 'rgba(11, 11, 13, 0.6)' : 'transparent';
+        p.style.backdropFilter = s ? 'blur(8px)' : 'none';
+        if (p.dataset.navpill !== 'keepborder') p.style.borderColor = s ? 'rgba(244, 243, 239, 0.14)' : 'transparent';
+      }
+    };
+    apply();
+    window.addEventListener('scroll', apply, { passive: true });
+  }
+
+
+  _setNavOpen(open) {
+    const panel = document.getElementById('nav-panel');
+    const toggle = document.getElementById('nav-toggle');
+    if (!panel) return;
+    panel.style.display = open ? 'flex' : 'none';
+    if (toggle) {
+      const d = window.SM_I18N, l = this._getLang();
+      const key = open ? 'Close' : 'Menu';
+      toggle.textContent = (l !== 'en' && d && d[key] && d[key][l]) || key;
+    }
+  }
+
+  _bindMobileNav() {
+    const links = document.getElementById('nav-links');
+    const toggle = document.getElementById('nav-toggle');
+    const panel = document.getElementById('nav-panel');
+    if (!links || !toggle || !panel) return;
+    if (!panel.dataset.filled) {
+      panel.dataset.filled = '1';
+      [...links.children].forEach((a) => {
+        const c = a.cloneNode(true);
+        c.style.cssText = 'font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.08em; color: #f4f3ef; padding: 0.85rem 0.2rem; border-bottom: 1px solid rgba(244, 243, 239, 0.1); pointer-events: auto; text-decoration: none;';
+        c.addEventListener('click', () => this._setNavOpen(false));
+        panel.appendChild(c);
+      });
+    }
+    if (!toggle.dataset.bound) {
+      toggle.dataset.bound = '1';
+      toggle.addEventListener('click', () => this._setNavOpen(panel.style.display !== 'flex'));
+    }
+    const apply = () => {
+      const small = window.innerWidth < 1040;
+      links.style.display = small ? 'none' : 'flex';
+      toggle.style.display = small ? 'inline-flex' : 'none';
+      if (small) this._setNavOpen(panel.style.display === 'flex');
+      if (!small) this._setNavOpen(false);
+    };
+    apply();
+    if (!this._navResizeBound) {
+      this._navResizeBound = true;
+      window.addEventListener('resize', apply);
+    }
+  }
+
+  componentDidMount() {
+    this._bindHeader();
+    this._bindMobileNav();
+    setTimeout(() => this._bindMobileNav(), 600);
+    this._cleanups = [];
+    this._applyAccent();
+    try {
+      const y = sessionStorage.getItem('sm-portfolio-scroll');
+      if (y !== null) {
+        sessionStorage.removeItem('sm-portfolio-scroll');
+        setTimeout(() => window.scrollTo(0, parseInt(y, 10) || 0), 150);
+      }
+    } catch (e) {}
+    this._setup();
+    this._setup3D();
+    this._applyLang();
+    this._paintLangButtons();
+    this._bindLangButtons();
+    setTimeout(() => { this._applyLang(); this._paintLangButtons(); this._bindLangButtons(); }, 600);
+  }
+
+  componentDidUpdate() {
+    this._applyAccent();
+    this._refreshEls();
+    this._scheduleLang();
+  }
+
+  _getLang() {
+    if (!this._lang) {
+      let saved = 'en';
+      try { saved = localStorage.getItem('sm-lang') || 'en'; } catch (e) {}
+      this._lang = saved;
+    }
+    return this._lang;
+  }
+
+  _setLang(l) {
+    this._lang = l;
+    try { localStorage.setItem('sm-lang', l); } catch (e) {}
+    // Defer the DOM translation until the event dispatch has fully unwound —
+    // mutating text nodes synchronously inside the runtime's synthetic event
+    // path locks the main thread.
+    setTimeout(() => {
+      this._applyLang();
+      this._paintLangButtons();
+    }, 0);
+  }
+
+  _bindLangButtons() {
+    [['lang-en', 'en'], ['lang-de', 'de'], ['lang-zh', 'zh']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el || el.dataset.langBound) return;
+      el.dataset.langBound = '1';
+      el.addEventListener('click', () => this._setLang(l));
+    });
+  }
+
+  _paintLangButtons() {
+    const lang = this._getLang();
+    [['lang-en', 'en'], ['lang-de', 'de'], ['lang-zh', 'zh']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.background = lang === l ? '#f4f3ef' : 'transparent';
+      el.style.color = lang === l ? '#0b0b0d' : '#9a9aa0';
+    });
+  }
+
+  _scheduleLang() {
+    if (this._langTimer) return;
+    this._langTimer = setTimeout(() => {
+      this._langTimer = null;
+      this._applyLang();
+    }, 50);
+  }
+
+  componentWillUnmount() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    (this._cleanups || []).forEach((fn) => fn());
+    if (this._observer) this._observer.disconnect();
+  }
+
+  _applyAccent() {
+    const acc = this.props.accentColor ?? '#e10600';
+    document.documentElement.style.setProperty('--acc', acc);
+    const m = /^#?([0-9a-f]{6})$/i.exec(acc.trim());
+    const hex = m ? m[1] : 'e10600';
+    this._accRGB = [
+      parseInt(hex.slice(0, 2), 16),
+      parseInt(hex.slice(2, 4), 16),
+      parseInt(hex.slice(4, 6), 16),
+    ];
+  }
+
+  _refreshEls() {
+    this._stickerEls = [...document.querySelectorAll('.sticker')].map((el) => ({
+      el,
+      depth: parseFloat(el.dataset.depth) || 0.08,
+      x: 0,
+      y: 0,
+    }));
+    this._applyMobileStickers();
+  }
+
+  _applyMobileStickers() {
+    const small = window.innerWidth < 720;
+    document.querySelectorAll('.sticker').forEach((el) => {
+      if (el.dataset.mobile === 'hide') el.style.display = small ? 'none' : '';
+    });
+  }
+
+  _on(target, ev, fn, opts) {
+    target.addEventListener(ev, fn, opts);
+    this._cleanups.push(() => target.removeEventListener(ev, fn, opts));
+  }
+
+  _setup3D() {
+    const holder = document.getElementById('model3d');
+    if (!holder || holder.dataset.ready) return;
+    holder.dataset.ready = '1';
+    const clamp01 = (v) => Math.min(1, Math.max(0, v));
+    const init = () => {
+      const THREE = window.THREE;
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+      holder.appendChild(renderer.domElement);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.z = 7;
+      const [ar, ag, ab] = this._accRGB || [225, 6, 0];
+      const accHex = (ar << 16) | (ag << 8) | ab;
+      const group = new THREE.Group();
+      const geo = new THREE.IcosahedronGeometry(1.55, 1);
+      group.add(new THREE.LineSegments(
+        new THREE.WireframeGeometry(geo),
+        new THREE.LineBasicMaterial({ color: 0xf4f3ef, transparent: true, opacity: 0.5 })
+      ));
+      group.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: accHex, size: 0.11 })));
+      group.add(new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.6, 2),
+        new THREE.MeshStandardMaterial({ color: 0x17171a, metalness: 0.85, roughness: 0.3 })
+      ));
+      scene.add(group);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+      const accLight = new THREE.PointLight(accHex, 1.6, 30);
+      accLight.position.set(3, 2, 4);
+      scene.add(accLight);
+      const fillLight = new THREE.PointLight(0xf4f3ef, 0.7, 30);
+      fillLight.position.set(-4, -2, 3);
+      scene.add(fillLight);
+      const onResize = () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      };
+      window.addEventListener('resize', onResize);
+      let raf;
+      const loop = () => {
+        raf = requestAnimationFrame(loop);
+        const about = document.getElementById('about');
+        const exp = document.getElementById('experience');
+        if (!about || !exp) { holder.style.opacity = '0'; return; }
+        const vh = window.innerHeight;
+        const r1 = about.getBoundingClientRect();
+        const r2 = exp.getBoundingClientRect();
+        const start = r1.top - vh * 0.75;
+        const end = r2.bottom - vh * 0.3;
+        if (end <= start) { holder.style.opacity = '0'; return; }
+        const p = clamp01(-start / (end - start));
+        const fade = Math.min(p / 0.07, 1) * 0.55;
+        holder.style.opacity = String(Math.max(0, fade));
+        // after the end of the range, the model anchors in place and
+        // scrolls away with the page instead of fading out
+        holder.style.transform = 'translateY(' + Math.min(0, end) + 'px)';
+        if (fade <= 0) return;
+        const t = performance.now() / 1000;
+        const halfH = Math.tan((45 / 2) * Math.PI / 180) * camera.position.z;
+        const halfW = halfH * camera.aspect;
+        const small = window.innerWidth < 720;
+        const amp = small ? 0.34 : 0.74;
+        group.position.x = Math.cos(p * Math.PI * 2) * halfW * amp;
+        group.position.y = Math.sin(p * Math.PI * 2) * halfH * 0.22 + Math.sin(t * 0.8) * 0.06;
+        const s = small ? 0.28 : 0.42;
+        group.scale.setScalar(s);
+        group.rotation.y = p * Math.PI * 3 + t * 0.12;
+        group.rotation.x = 0.35 * Math.sin(p * Math.PI * 2) + 0.1;
+        renderer.render(scene, camera);
+      };
+      raf = requestAnimationFrame(loop);
+      this._cleanups.push(() => {
+        cancelAnimationFrame(raf);
+        window.removeEventListener('resize', onResize);
+        renderer.dispose();
+        renderer.domElement.remove();
+      });
+    };
+    if (window.THREE) { init(); return; }
+    let tries = 0;
+    const poll = setInterval(() => {
+      if (window.THREE) { clearInterval(poll); init(); }
+      else if (++tries > 100) clearInterval(poll);
+    }, 100);
+    this._cleanups.push(() => clearInterval(poll));
+  }
+
+  _setup() {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const clamp01 = (v) => Math.min(1, Math.max(0, v));
+
+    // ----- element refs -----
+    const portrait = document.getElementById('portrait');
+    const colorCanvas = document.getElementById('portrait-color-canvas');
+    const canvas = document.getElementById('bg-canvas');
+    const hero = document.getElementById('home');
+    const nameMarquee = document.getElementById('name-marquee');
+    const signature = document.getElementById('signature');
+    const tagline = document.getElementById('hero-tagline');
+    if (!portrait || !canvas) return;
+    const ctx = canvas.getContext('2d');
+    this._refreshEls();
+
+    // ----- 1. spotlight reveal with fading trail -----
+    let tX = 0, tY = 0, tR = 0, cX = 0, cY = 0, cR = 0;
+    const SPOT = 150;
+    const EASE_P = reducedMotion ? 1 : 0.16;
+    const EASE_R = reducedMotion ? 1 : 0.08;
+    const cctx = colorCanvas.getContext('2d');
+    const trail = document.createElement('canvas');
+    const tctx = trail.getContext('2d');
+    const colImg = new Image();
+    colImg.src = 'assets/portrait_full_color.jpg';
+    const local = (e) => {
+      const b = portrait.getBoundingClientRect();
+      return { x: e.clientX - b.left, y: e.clientY - b.top };
+    };
+    this._on(portrait, 'pointerenter', (e) => {
+      const p = local(e);
+      cX = tX = p.x; cY = tY = p.y; tR = SPOT;
+    });
+    this._on(portrait, 'pointermove', (e) => {
+      const p = local(e);
+      tX = p.x; tY = p.y; tR = SPOT;
+    });
+    this._on(portrait, 'pointerleave', () => { tR = 0; });
+    const updateSpotlight = () => {
+      const rect = portrait.getBoundingClientRect();
+      const w = Math.round(rect.width), h = Math.round(rect.height);
+      if (!w || !h) return;
+      if (colorCanvas.width !== w || colorCanvas.height !== h) {
+        colorCanvas.width = w; colorCanvas.height = h;
+        trail.width = w; trail.height = h;
+      }
+      cX = lerp(cX, tX, EASE_P);
+      cY = lerp(cY, tY, EASE_P);
+      cR = lerp(cR, tR, EASE_R);
+      // the trail slowly dissolves…
+      tctx.globalCompositeOperation = 'destination-out';
+      tctx.fillStyle = 'rgba(0, 0, 0, 0.035)';
+      tctx.fillRect(0, 0, w, h);
+      // …while the brush keeps painting at the eased cursor position
+      if (cR > 2) {
+        tctx.globalCompositeOperation = 'source-over';
+        const g = tctx.createRadialGradient(cX, cY, 0, cX, cY, cR);
+        g.addColorStop(0, 'rgba(255,255,255,0.95)');
+        g.addColorStop(0.55, 'rgba(255,255,255,0.55)');
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        tctx.fillStyle = g;
+        tctx.beginPath();
+        tctx.arc(cX, cY, cR, 0, Math.PI * 2);
+        tctx.fill();
+      }
+      // composite: color photo (cover, center 22%) masked by the trail
+      cctx.clearRect(0, 0, w, h);
+      if (colImg.complete && colImg.naturalWidth) {
+        const iw = colImg.naturalWidth, ih = colImg.naturalHeight;
+        const s = Math.max(w / iw, h / ih);
+        const dw = iw * s, dh = ih * s;
+        cctx.drawImage(colImg, (w - dw) / 2, (h - dh) * 0.22, dw, dh);
+        cctx.globalCompositeOperation = 'destination-in';
+        cctx.drawImage(trail, 0, 0);
+        cctx.globalCompositeOperation = 'source-over';
+      }
+    };
+
+    // ----- 2. dot grid + streaks -----
+    const SPACING = 26;
+    let dots = [], dpr = 1;
+    let mouseX = -9999, mouseY = -9999, easedX = -9999, easedY = -9999;
+    const buildGrid = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      dots = [];
+      for (let y = SPACING / 2; y < window.innerHeight; y += SPACING)
+        for (let x = SPACING / 2; x < window.innerWidth; x += SPACING)
+          dots.push({ x, y, ph: Math.random() * Math.PI * 2, ph2: Math.random() * Math.PI * 2, amp: 4 + Math.random() * 10, spd: 0.18 + Math.random() * 0.5 });
+    };
+    buildGrid();
+    this._on(window, 'resize', () => { buildGrid(); this._applyMobileStickers(); });
+    this._on(window, 'pointermove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+    const streaks = [];
+    const spawn = (s, onScreen) => {
+      const w = window.innerWidth, h = window.innerHeight;
+      if (onScreen) {
+        s.x = Math.random() * w; s.y = Math.random() * h;
+        s.angle = Math.random() * Math.PI * 2;
+      } else {
+        const edge = Math.floor(Math.random() * 4);
+        if (edge === 0) { s.x = -150; s.y = Math.random() * h; s.angle = 0; }
+        if (edge === 1) { s.x = w + 150; s.y = Math.random() * h; s.angle = Math.PI; }
+        if (edge === 2) { s.x = Math.random() * w; s.y = -150; s.angle = Math.PI / 2; }
+        if (edge === 3) { s.x = Math.random() * w; s.y = h + 150; s.angle = -Math.PI / 2; }
+        s.angle += (Math.random() - 0.5) * (Math.PI / 2.2);
+      }
+      s.speed = 0.6 + Math.random() * 1.0;
+      s.curve = (Math.random() - 0.5) * 0.012;
+      s.radius = 110 + Math.random() * 70;
+    };
+    for (let i = 0; i < 6; i++) { const s = {}; spawn(s, true); streaks.push(s); }
+    const updateStreaks = () => {
+      const w = window.innerWidth, h = window.innerHeight;
+      for (const s of streaks) {
+        s.x += Math.cos(s.angle) * s.speed;
+        s.y += Math.sin(s.angle) * s.speed;
+        s.angle += s.curve;
+        if (s.x < -300 || s.x > w + 300 || s.y < -300 || s.y > h + 300) spawn(s);
+      }
+    };
+    const drawDots = () => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      if ((this.props.dotGrid ?? true) === false) return;
+      easedX = lerp(easedX, mouseX, 0.15);
+      easedY = lerp(easedY, mouseY, 0.15);
+      const points = reducedMotion ? [] : [{ x: easedX, y: easedY, radius: 190 }, ...streaks];
+      const [ar, ag, ab] = this._accRGB || [225, 6, 0];
+      const prect = portrait.getBoundingClientRect();
+      const photoW = Math.max(prect.width, prect.height * 2 / 3);
+      const photoH = photoW * 1.5;
+      const offY = 0.22 * (photoH - prect.height);
+      const ecx = prect.left + prect.width / 2;
+      const ecy = prect.top + photoH * 0.30 - offY;
+      const erx = Math.max(1, photoW * 0.24);
+      const ery = Math.max(1, photoH * 0.17);
+      const now = performance.now() / 1000;
+      for (const dot of dots) {
+        const bx = dot.x + Math.cos(now * dot.spd + dot.ph) * dot.amp;
+        const by = dot.y + Math.sin(now * dot.spd * 0.8 + dot.ph2) * dot.amp;
+        const exn = (bx - ecx) / erx, eyn = (by - ecy) / ery;
+        if (exn * exn + eyn * eyn < 1) continue;
+        let t = 0, px = 0, py = 0, pd = 1;
+        for (const p of points) {
+          const dx = bx - p.x, dy = by - p.y;
+          const dist = Math.hypot(dx, dy);
+          const ti = Math.max(0, 1 - dist / p.radius);
+          if (ti > t) { t = ti; px = dx; py = dy; pd = dist; }
+        }
+        const push = t * t * 16;
+        const x = bx + (pd > 0 ? (px / pd) * push : 0);
+        const y = by + (pd > 0 ? (py / pd) * push : 0);
+        const r = Math.round(238 + (ar - 238) * t);
+        const g = Math.round(238 + (ag - 238) * t);
+        const b = Math.round(234 + (ab - 234) * t);
+        const alpha = 0.3 + t * 0.55;
+        const size = 1 + t * 1.5;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        ctx.fill();
+      }
+    };
+
+    // ----- 3. sticker parallax -----
+    let normX = 0, normY = 0;
+    this._on(window, 'pointermove', (e) => {
+      normX = e.clientX / window.innerWidth - 0.5;
+      normY = e.clientY / window.innerHeight - 0.5;
+    });
+    const updateStickers = () => {
+      if (reducedMotion) return;
+      for (const s of this._stickerEls || []) {
+        s.x = lerp(s.x, normX * s.depth * 700, 0.06);
+        s.y = lerp(s.y, normY * s.depth * 500, 0.06);
+        s.el.style.translate = s.x + 'px ' + s.y + 'px';
+      }
+    };
+
+    // ----- 4. pinned hero scroll -----
+    const updateHeroScroll = () => {
+      if (reducedMotion) {
+        signature.style.opacity = '1';
+        const sp0 = document.getElementById('sig-mask-path');
+        if (sp0) sp0.style.strokeDashoffset = '0';
+        if (nameMarquee) nameMarquee.style.opacity = '1';
+        return;
+      }
+      const total = hero.offsetHeight - window.innerHeight;
+      const p = clamp01(window.scrollY / total);
+      const vw2 = window.innerWidth, vh2 = window.innerHeight;
+      const S = Math.min(vh2 * 0.52, vw2 * 0.8);
+      const shrink = clamp01(p / 0.75);
+      const eased = 1 - Math.pow(1 - shrink, 3);
+      portrait.style.width = vw2 + (S - vw2) * eased + 'px';
+      portrait.style.height = vh2 + (S - vh2) * eased + 'px';
+      portrait.style.bottom = ((vh2 - S) / 2) * eased + 'px';
+      if (nameMarquee) nameMarquee.style.opacity = String(clamp01((p - 0.15) / 0.2));
+      const fadeOut = 1 - clamp01(p / 0.28);
+      const stickersWrap = document.getElementById('stickers');
+      if (stickersWrap) stickersWrap.style.opacity = String(fadeOut);
+      tagline.style.opacity = String(fadeOut);
+      const sig = clamp01((p - 0.35) / 0.4);
+      signature.style.opacity = sig > 0 ? '1' : '0';
+      const sp = document.getElementById('sig-mask-path');
+      if (sp) {
+        if (!this._sigLen) this._sigLen = sp.getTotalLength();
+        sp.style.strokeDasharray = String(this._sigLen);
+        sp.style.strokeDashoffset = String(this._sigLen * (1 - sig));
+      }
+      signature.style.transform = 'translate(-50%, -50%) rotate(-5deg) scale(' + (0.75 + sig * 0.55) + ')';
+    };
+
+    // ----- the one loop -----
+    const tick = () => {
+      updateSpotlight();
+      updateStreaks();
+      drawDots();
+      updateStickers();
+      updateHeroScroll();
+      if (this._scrollFx) this._scrollFx();
+      this._raf = requestAnimationFrame(tick);
+    };
+    this._raf = requestAnimationFrame(tick);
+
+    // ----- scroll reveals -----
+    const revealables = document.querySelectorAll('[data-reveal]');
+    this._observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'none';
+          this._observer.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.15 });
+    // ----- stat counters -----
+    const statEls = document.querySelectorAll('.stat-number');
+    const runCounter = (el) => {
+      const target = Number(el.dataset.target);
+      if (reducedMotion) { el.textContent = target; return; }
+      const duration = 1500;
+      const start = performance.now();
+      const tickC = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * eased);
+        if (progress < 1) requestAnimationFrame(tickC);
+      };
+      requestAnimationFrame(tickC);
+    };
+    const statsSection = document.getElementById('stats');
+    if (statsSection) {
+      this._statsObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            statEls.forEach(runCounter);
+            this._statsObserver.disconnect();
+          }
+        }
+      }, { threshold: 0.4 });
+      this._statsObserver.observe(statsSection);
+      this._cleanups.push(() => this._statsObserver.disconnect());
+    }
+
+    revealables.forEach((el, i) => {
+      if (reducedMotion) return;
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight) return; // already visible — don't hide
+      const kind = el.dataset.reveal;
+      el.style.opacity = '0';
+      if (kind === 'left') el.style.transform = 'translateX(-70px)';
+      else if (kind === 'right') el.style.transform = 'translateX(70px) rotate(2deg)';
+      else if (kind === 'scale') el.style.transform = 'translateY(30px) scale(0.92)';
+      else el.style.transform = 'translateY(45px)';
+      el.style.transition =
+        'opacity 0.9s cubic-bezier(0.16,1,0.3,1) ' + (i % 3) * 0.12 + 's, ' +
+        'transform 0.9s cubic-bezier(0.16,1,0.3,1) ' + (i % 3) * 0.12 + 's';
+      this._observer.observe(el);
+    });
+
+    // ----- scroll progress + marquee skew + heading parallax -----
+    // All reads are cached up front (no per-frame getBoundingClientRect /
+    // scrollHeight) so the rAF tick only does cheap math + style writes.
+    const progressBar = document.getElementById('scroll-progress');
+    const skewEls = [...document.querySelectorAll('[data-skew]')];
+    const parallaxEls = [...document.querySelectorAll('[data-parallax]')].map((el) => ({
+      el, top: 0, h: 0, sp: parseFloat(el.dataset.parallax) || 0.06,
+    }));
+    let maxScroll = 1;
+    const measureFx = () => {
+      maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      for (const p of parallaxEls) {
+        p.el.style.translate = '';
+        const r = p.el.getBoundingClientRect();
+        p.top = r.top + window.scrollY;
+        p.h = r.height;
+      }
+    };
+    measureFx();
+    setTimeout(measureFx, 1200);
+    this._on(window, 'resize', measureFx);
+    let lastY = window.scrollY, skew = 0, lastFxY = -1;
+    this._scrollFx = () => {
+      if (reducedMotion) return;
+      const y = window.scrollY;
+      const vel = y - lastY;
+      lastY = y;
+      skew = lerp(skew, Math.max(-10, Math.min(10, vel * 0.35)), 0.12);
+      if (Math.abs(skew) < 0.05) skew = 0;
+      if (y === lastFxY && skew === 0) return;
+      lastFxY = y;
+      if (progressBar) progressBar.style.transform = 'scaleX(' + clamp01(y / maxScroll) + ')';
+      for (const el of skewEls) el.style.transform = 'skewX(' + skew.toFixed(2) + 'deg)';
+      const vh3 = window.innerHeight;
+      for (const p of parallaxEls) {
+        const rel = (p.top - y + p.h / 2) / vh3 - 0.5;
+        if (rel < -1 || rel > 1.5) continue;
+        p.el.style.translate = '0 ' + (rel * p.sp * -300).toFixed(1) + 'px';
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
