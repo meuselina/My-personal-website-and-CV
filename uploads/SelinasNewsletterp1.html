@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Selina's Review of the Week — July 19, 2026</title>
+<style>
+  /* ===== Basis ===== */
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #faf7f2;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #2b2b2b;
+    overflow-x: hidden;
+  }
+  .wrapper { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+  /* ===== Header mit schwebenden Formen ===== */
+  .header {
+    position: relative;
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 12px;
+    padding: 30px 0 10px;
+  }
+  .kicker {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: #8a7f6d; margin: 0 0 10px;
+  }
+  .header h1 {
+    font-size: 36px; margin: 0; line-height: 1.2;
+    background: linear-gradient(90deg, #2b2b2b, #b0492f, #2b2b2b);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 6s linear infinite;
+  }
+  @keyframes shine {
+    to { background-position: 200% center; }
+  }
+  .dateline { font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #8a7f6d; margin: 12px 0 0; }
+
+  .floaty {
+    position: absolute;
+    font-size: 28px;
+    opacity: 0.35;
+    animation: float 7s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .floaty:nth-child(1) { left: -4%;  top: 10%; animation-delay: 0s; }
+  .floaty:nth-child(2) { right: -2%; top: 30%; animation-delay: 1.5s; font-size: 34px; }
+  .floaty:nth-child(3) { left: 8%;   bottom: -10%; animation-delay: 3s; font-size: 22px; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50%      { transform: translateY(-16px) rotate(5deg); }
+  }
+
+  .intro {
+    max-width: 640px; margin: 20px auto 28px; text-align: center;
+    font-size: 16.5px; line-height: 1.7;
+  }
+
+  /* ===== Börsenticker ===== */
+  .ticker {
+    overflow: hidden;
+    background: #2b2b2b;
+    border-radius: 999px;
+    margin: 0 auto 36px;
+    max-width: 820px;
+    padding: 10px 0;
+  }
+  .ticker-track {
+    display: inline-block;
+    white-space: nowrap;
+    animation: ticker 30s linear infinite;
+  }
+  .ticker:hover .ticker-track { animation-play-state: paused; }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .ticker span {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12.5px; letter-spacing: 1px;
+    color: #f4f1ec;
+    margin: 0 22px;
+  }
+  .up   { color: #7ddba3; font-weight: bold; }
+  .down { color: #f2917e; font-weight: bold; }
+
+  /* ===== Pinterest-Grid ===== */
+  .grid { column-count: 2; column-gap: 24px; }
+  @media (max-width: 680px) {
+    .grid { column-count: 1; }
+  }
+
+  /* ===== Karten ===== */
+  .story {
+    display: inline-block;
+    width: 100%;
+    break-inside: avoid;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px 24px 20px;
+    margin: 0 0 24px;
+    box-shadow: 0 2px 12px rgba(43, 43, 43, 0.07);
+    box-sizing: border-box;
+    transition: transform 0.2s ease-out, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+    opacity: 0;
+    translate: 0 36px;
+  }
+  .story.visible {
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 0.7s ease, translate 0.7s cubic-bezier(0.2, 0.7, 0.3, 1),
+                transform 0.2s ease-out, box-shadow 0.3s ease;
+  }
+  .story:hover { box-shadow: 0 14px 34px rgba(43, 43, 43, 0.16); }
+
+  .story-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    margin-bottom: 14px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase;
+    font-weight: bold;
+    padding: 5px 12px; border-radius: 999px;
+    margin: 0 0 12px;
+  }
+  .tag.world    { background: #fbe4de; color: #a53e26; }
+  .tag.tech     { background: #e3edf7; color: #2f5d8a; }
+  .tag.business { background: #e8f2e4; color: #3e6b34; }
+  .tag.ai       { background: #f0e6f6; color: #6a4192; }
+  .tag.climate  { background: #fdf3d7; color: #8a6d1a; }
+  .tag.sport    { background: #def0ee; color: #22665e; }
+  .tag.fashion  { background: #fbe8f0; color: #a13565; }
+  .tag.markets  { background: #dfe9e4; color: #1e5245; }
+
+  .story h2 { font-size: 19px; margin: 0 0 10px; line-height: 1.3; }
+  .story p { font-size: 14.5px; line-height: 1.65; margin: 0 0 10px; }
+  .source { font-family: Helvetica, Arial, sans-serif; font-size: 11.5px; margin: 0; }
+  .source a { color: #b0492f; text-decoration: none; }
+  .source a:hover { text-decoration: underline; }
+
+  mark {
+    background: linear-gradient(180deg, transparent 55%, #f5d76e 55%);
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    padding: 0 2px;
+    font-weight: bold;
+    transition: background-size 0.9s ease 0.4s;
+  }
+  .story.visible mark { background-size: 100% 100%; }
+
+  .mythought {
+    border-left: 4px solid #b0492f;
+    background: #fdf9f0;
+    padding: 10px 14px;
+    margin: 12px 0 10px;
+    font-style: italic;
+    font-size: 13.5px;
+    line-height: 1.6;
+    border-radius: 0 10px 10px 0;
+  }
+  .mythought .who {
+    font-family: Helvetica, Arial, sans-serif;
+    font-style: normal; font-weight: bold;
+    font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase;
+    color: #b0492f; display: block; margin-bottom: 4px;
+  }
+
+  /* ===== Abschluss ===== */
+  .signoff {
+    max-width: 640px;
+    margin: 32px auto 0;
+    display: flex; align-items: flex-end; gap: 14px;
+    opacity: 0; translate: 0 36px;
+  }
+  .signoff.visible {
+    opacity: 1; translate: 0 0;
+    transition: opacity 0.7s ease, translate 0.7s cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  .signoff img {
+    width: 92px; height: 92px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 12%;
+    background-color: #7d8a8f;
+    border: 4px solid #ffffff;
+    box-shadow: 0 4px 14px rgba(43, 43, 43, 0.18);
+    flex-shrink: 0;
+    animation: float 5s ease-in-out infinite;
+  }
+  .bubble {
+    background: #fdf3e7;
+    border-radius: 22px 22px 22px 6px;
+    padding: 18px 22px;
+    font-size: 15px; line-height: 1.6;
+    box-shadow: 0 4px 16px rgba(43, 43, 43, 0.10);
+  }
+  .bubble .name {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: #b0492f; font-weight: bold; margin-top: 10px; display: block;
+  }
+
+  .disclaimer {
+    max-width: 640px;
+    margin: 36px auto 0;
+    text-align: center;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10.5px;
+    color: #b5ac9e;
+    line-height: 1.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .story, .signoff { opacity: 1; translate: 0 0; }
+    .floaty, .signoff img, .header h1 { animation: none; }
+    mark { background-size: 100% 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Header -->
+  <div class="header">
+    <span class="floaty">☕</span>
+    <span class="floaty">🌍</span>
+    <span class="floaty">✨</span>
+    <p class="kicker">Selina's Review of the Week</p>
+    <h1>A Fence Falls, Bridges Burn &amp; Britain Swaps PMs</h1>
+    <p class="dateline">Sunday Edition &middot; July 19, 2026 &middot; ~3 min read</p>
+  </div>
+
+  <!-- Intro -->
+  <p class="intro">
+    Hi, it's me — Selina. ☕ This week gave us whiplash: a border fence came down in Europe while bridges came down in the Gulf, Britain got yet another prime minister, and the AI world crammed a full year of announcements into five days. Grab your coffee. Let's go.
+  </p>
+
+  <!-- Börsenticker -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <span>WTI OIL <b class="up">▲ $80+</b></span>
+      <span>NETFLIX <b class="down">▼ −10%</b></span>
+      <span>SOX CHIPS <b class="down">▼ −20% from highs</b></span>
+      <span>GOLDMAN <b class="up">▲ beat</b></span>
+      <span>BofA <b class="up">▲ $1.21 EPS</b></span>
+      <span>TRAVELERS <b class="up">▲ +8%</b></span>
+      <span>US CPI <b class="down">▼ cooler than expected</b></span>
+      <span>WTI OIL <b class="up">▲ $80+</b></span>
+      <span>NETFLIX <b class="down">▼ −10%</b></span>
+      <span>SOX CHIPS <b class="down">▼ −20% from highs</b></span>
+      <span>GOLDMAN <b class="up">▲ beat</b></span>
+      <span>BofA <b class="up">▲ $1.21 EPS</b></span>
+      <span>TRAVELERS <b class="up">▲ +8%</b></span>
+      <span>US CPI <b class="down">▼ cooler than expected</b></span>
+    </div>
+  </div>
+
+  <!-- Pinterest-Grid -->
+  <div class="grid">
+
+    <!-- Story 1 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#fbe4de"/>
+        <path d="M40 70 h 320" stroke="#a53e26" stroke-width="5"/>
+        <path d="M60 70 q 40 -30 80 0 M180 70 q 40 -30 80 0" fill="none" stroke="#c96b52" stroke-width="4"/>
+        <rect x="96" y="70" width="8" height="26" fill="#a53e26"/>
+        <rect x="216" y="70" width="8" height="26" fill="#a53e26"/>
+        <circle cx="330" cy="30" r="14" fill="#f2917e"/>
+        <path d="M0 96 h 400 V 110 H 0 Z" fill="#f5c9bd"/>
+      </svg>
+      <span class="tag world">World</span>
+      <h2>US–Iran: seven nights, and no exit ramp</h2>
+      <p>
+        The US hit <mark>six bridges near Bandar Abbas</mark> in its seventh consecutive night of strikes, while Iranian fire reached Kuwait and Qatar. Two American service members were killed Friday — the first US military deaths in this war since March. A strike on a desalination plant left 20 villages without water.
+      </p>
+      <div class="mythought">
+        <span class="who">💭 Selina's thought</span>
+        Day 141. The diplomats have gone quiet, which is never the good kind of quiet.
+      </div>
+      <p class="source"><a href="https://www.cnn.com/2026/07/17/world/live-news/iran-war-trump">Source: CNN / NPR</a></p>
+    </div>
+
+    <!-- Story 2 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#def0ee"/>
+        <rect x="0" y="86" width="400" height="24" fill="#8fc7bf"/>
+        <g opacity="0.45">
+          <rect x="90" y="34" width="6" height="52" fill="#22665e"/>
+          <rect x="120" y="34" width="6" height="52" fill="#22665e"/>
+          <rect x="150" y="34" width="6" height="52" fill="#22665e"/>
+        </g>
+        <g transform="rotate(24 230 60)">
+          <rect x="212" y="34" width="6" height="52" fill="#22665e"/>
+          <rect x="242" y="34" width="6" height="52" fill="#22665e"/>
+        </g>
+        <circle cx="320" cy="52" r="16" fill="#fff" stroke="#22665e" stroke-width="3"/>
+        <path d="M313 52 l 5 6 l 10 -13" fill="none" stroke="#22665e" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span class="tag world">Europe</span>
+      <h2>Gibraltar's fence came down — and people danced</h2>
+      <p>
+        After four years of post-Brexit negotiation, Spain and Gibraltar <mark>removed their border fence</mark>. Gibraltar effectively joins Schengen; passport checks moved to the airport and port. The 15,000 Spanish workers who cross daily waved banners reading "At last, no more queues."
+      </p>
+      <div class="mythought">
+        <span class="who">💭 Selina's thought</span>
+        A border that got <i>easier</i>. I had to read it twice. Filing this one under "good news, 2026 edition."
+      </div>
+      <p class="source"><a href="https://www.euronews.com/video/2026/07/15/gibraltar-enters-schengen-as-border-fence-comes-down-under-eu-uk-treaty">Source: Euronews / Irish Times</a></p>
+    </div>
+
+    <!-- Story 3 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#e3edf7"/>
+        <rect x="160" y="26" width="80" height="60" rx="4" fill="#2f5d8a"/>
+        <rect x="172" y="38" width="16" height="16" fill="#e3edf7"/>
+        <rect x="196" y="38" width="16" height="16" fill="#e3edf7"/>
+        <rect x="172" y="60" width="16" height="16" fill="#e3edf7"/>
+        <rect x="196" y="60" width="16" height="16" fill="#e3edf7"/>
+        <rect x="186" y="10" width="6" height="18" fill="#5580a8"/>
+        <circle cx="110" cy="56" r="14" fill="#7ba3c6"/>
+        <circle cx="290" cy="56" r="14" fill="#c96b52"/>
+        <path d="M126 56 h 30 M264 56 h -30" stroke="#5580a8" stroke-width="3" stroke-dasharray="5 5"/>
+      </svg>
+      <span class="tag world">Politics</span>
+      <h2>Britain's seventh PM in a decade</h2>
+      <p>
+        Following Keir Starmer's resignation, <b>Andy Burnham</b> — Mayor of Greater Manchester — is on course to take over as Labour leader and prime minister. Small detail: he had to win a hastily arranged by-election first, just to get a seat in Parliament.
+      </p>
+      <div class="mythought">
+        <span class="who">💭 Selina's thought</span>
+        Seven prime ministers in ten years. At this point Downing Street should offer a loyalty card.
+      </div>
+      <p class="source"><a href="https://www.nbcnews.com/world/united-kingdom/keir-starmer-resigns-prime-minister-andy-burnham-labour-party-britain-rcna257534">Source: NBC News / CNN</a></p>
+    </div>
+
+    <!-- Story 4 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#fdf3d7"/>
+        <path d="M0 76 q 50 -14 100 0 t 100 0 t 100 0 t 100 0 V 110 H 0 Z" fill="#c9b06a"/>
+        <path d="M0 86 q 50 -12 100 0 t 100 0 t 100 0 t 100 0 V 110 H 0 Z" fill="#8a6d1a" opacity="0.5"/>
+        <rect x="180" y="26" width="40" height="42" rx="4" fill="#fff" stroke="#8a6d1a" stroke-width="3"/>
+        <path d="M186 40 h 28 M186 50 h 28 M186 60 h 18" stroke="#c9b06a" stroke-width="3"/>
+        <circle cx="300" cy="32" r="12" fill="#e8b13c"/>
+      </svg>
+      <span class="tag climate">Germany</span>
+      <h2>Five years after the Ahrtal flood</h2>
+      <p>
+        Rhineland-Palatinate and NRW held commemorations this week marking five years since the 2021 flood disaster. It lands as the Merz coalition pushes its "Programme for Revival" — 34 measures including roughly <mark>€10 billion in annual tax relief</mark> from 2027, plus pension and bureaucracy reform.
+      </p>
+      <div class="mythought">
+        <span class="who">💭 Selina's thought</span>
+        Five years is long enough to write reform packages, and apparently still not long enough to finish rebuilding. Both things are true.
+      </div>
+      <p class="source"><a href="https://www.aljazeera.com/news/2026/7/2/german-coalition-agrees-on-sweeping-reform-package-in-key-breakthrough">Source: Al Jazeera / Bundesregierung</a></p>
+    </div>
+
+    <!-- Story 5 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#f0e6f6"/>
+        <circle cx="120" cy="55" r="24" fill="#c9a4e0"/>
+        <text x="120" y="62" font-family="Helvetica, Arial" font-size="16" font-weight="bold" fill="#6a4192" text-anchor="middle">5.6</text>
+        <circle cx="210" cy="55" r="24" fill="#8e5fb5"/>
+        <text x="210" y="62" font-family="Helvetica, Arial" font-size="15" font-weight="bold" fill="#f0e6f6" text-anchor="middle">3.5</text>
+        <path d="M152 55 h 26 M242 55 h 26" stroke="#6a4192" stroke-width="3"/>
+        <circle cx="300" cy="55" r="20" fill="#b58ad1"/>
+        <path d="M292 55 a 8 8 0 0 1 16 0 a 8 8 0 0 1 -16 0" fill="#f0e6f6"/>
+      </svg>
+      <span class="tag ai">AI</span>
+      <h2>The busiest week of the AI year</h2>
+      <p>
+        OpenAI's <b>GPT-5.6</b> family (Sol, Terra, Luna) shipped at prices designed to undercut everyone. Google's <b>Gemini 3.5 Pro</b> was expected Friday — the same day Shanghai's World AI Conference opened with Xi Jinping attending in person for the first time. And OpenAI floated handing the US government a <mark>5% stake worth ~$42.6 billion</mark>.
+      </p>
+      <div class="mythought">
+        <span class="who">💭 Selina's thought</span>
+        Offering your government a stake in your company is a bold way to say "please don't regulate us."
+      </div>
+      <p class="source"><a href="https://techcrunch.com/category/artificial-intelligence/">Source: TechCrunch / AI Tools Recap</a></p>
+    </div>
+
+    <!-- Story 6 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#f0e6f6"/>
+        <line x1="60" y1="88" x2="340" y2="88" stroke="#b58ad1" stroke-width="2"/>
+        <rect x="90" y="26" width="34" height="62" rx="4" fill="#8e5fb5"/>
+        <rect x="180" y="58" width="34" height="30" rx="4" fill="#c9a4e0"/>
+        <path d="M107 20 L 197 50" stroke="#6a4192" stroke-width="3" stroke-dasharray="6 4"/>
+        <path d="M197 50 l -12 -2 l 6 -10 z" fill="#6a4192"/>
+        <text x="107" y="16" font-family="Helvetica, Arial" font-size="11" fill="#6a4192" text-anchor="middle">46%</text>
+        <text x="197" y="52" font-family="Helvetica, Arial" font-size="11" fill="#6a4192" text-anchor="start" dx="8">20%</text>
+        <circle cx="300" cy="55" r="22" fill="#c9a4e0"/>
+        <path d="M292 55 l 6 7 l 12 -16" fill="none" stroke="#6a4192" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span class="tag ai">AI &amp; Work</span>
+      <h2>The AI job panic is quietly deflating</h2>
+      <p>
+        From Exponential View's Monday data drop: the share of CEOs expecting big AI-driven headcount cuts fell from <mark>46% in Jan 2025 to just 20% now</mark>. ChatGPT's user share dropped below 50% for the first time. And ByteDance found newer models learn on the job about twice as fast as models from three months ago.
+      </p>
+      <div class="mythought">
+        <span class="who">💭 Selina's thought</span>
+        The models are getting faster while the layoff panic cools. Turns out "AI takes all jobs" was a worse prediction than "AI reshuffles all workflows."
+      </div>
+      <p class="source"><a href="https://www.exponentialview.co/p/data-to-start-your-week-13-july-2026">Source: Exponential View</a></p>
+    </div>
+
+    <!-- Story 7 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#dfe9e4"/>
+        <line x1="50" y1="92" x2="350" y2="92" stroke="#a8c2b5" stroke-width="2"/>
+        <rect x="80" y="44" width="14" height="32" fill="#1e5245"/><line x1="87" y1="34" x2="87" y2="86" stroke="#1e5245" stroke-width="3"/>
+        <rect x="130" y="38" width="14" height="34" fill="#1e5245"/><line x1="137" y1="28" x2="137" y2="82" stroke="#1e5245" stroke-width="3"/>
+        <rect x="180" y="52" width="14" height="34" fill="#c96b52"/><line x1="187" y1="44" x2="187" y2="92" stroke="#c96b52" stroke-width="3"/>
+        <rect x="230" y="58" width="14" height="30" fill="#c96b52"/><line x1="237" y1="50" x2="237" y2="94" stroke="#c96b52" stroke-width="3"/>
+        <rect x="280" y="36" width="14" height="30" fill="#1e5245"/><line x1="287" y1="26" x2="287" y2="76" stroke="#1e5245" stroke-width="3"/>
+      </svg>
+      <span class="tag markets">📈 Markets</span>
+      <h2>Banks shine, Netflix stumbles, chips slide</h2>
+      <p>
+        Earnings season opened well for the banks — <b>BofA</b> ($1.21 EPS) and <b>Goldman</b> both beat, Travelers jumped 8%. Then <b>Netflix fell over 10%</b> on a soft forecast, and semis are down roughly 20% from recent highs. June inflation came in cooler than expected, oil pushed past $80 on the war.
+      </p>
+      <div class="mythought">
+        <span class="who">💭 Selina's thought</span>
+        The data says the economy is fine. <mark>61% of the public says it isn't.</mark> That gap is the biggest since the pandemic years — and vibes tend to win elections.
+      </div>
+      <p class="source"><a href="https://www.cnbc.com/2026/07/16/stock-market-today-live-updates.html">Source: CNBC / Morning Brew</a></p>
+    </div>
+
+    <!-- Story 8 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#e8f2e4"/>
+        <rect x="150" y="52" width="18" height="34" rx="3" fill="#8db682"/>
+        <rect x="176" y="40" width="18" height="46" rx="3" fill="#6a9b5e"/>
+        <rect x="202" y="26" width="18" height="60" rx="3" fill="#3e6b34"/>
+        <path d="M240 44 l 26 -20 l -4 15 z" fill="#3e6b34"/>
+        <circle cx="110" cy="40" r="10" fill="#8db682"/>
+        <circle cx="90" cy="62" r="7" fill="#a8cc9c"/>
+        <text x="300" y="60" font-family="Helvetica, Arial" font-size="26" font-weight="bold" fill="#3e6b34" text-anchor="middle">3k+</text>
+      </svg>
+      <span class="tag business">Business</span>
+      <h2>Germany quietly had a record startup half-year</h2>
+      <p>
+        Buried under the war and earnings headlines: over <mark>3,000 new startups</mark> were founded in Germany in the first half of 2026 — a record, driven largely by the AI boom. Meanwhile Merz called Canada's German-Norwegian submarine deal the largest international defence contract in the country's history.
+      </p>
+      <p class="source"><a href="https://www.deutschland.de/en/news">Source: deutschland.de / Bundesregierung</a></p>
+    </div>
+
+    <!-- Story 9 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#fbe8f0"/>
+        <path d="M120 96 q 6 -50 26 -60 q 20 10 26 60 z" fill="#c9779b"/>
+        <circle cx="146" cy="30" r="10" fill="#a13565"/>
+        <path d="M250 96 q -6 -40 10 -52 q 8 -8 18 0 q 16 12 10 52 z" fill="#e3a8c2"/>
+        <path d="M258 44 q 12 -16 24 0" fill="none" stroke="#a13565" stroke-width="3"/>
+        <path d="M320 20 q 14 6 10 24 q -3 12 -14 8" fill="none" stroke="#a13565" stroke-width="3"/>
+        <path d="M70 30 l 3 8 l 8 3 l -8 3 l -3 8 l -3 -8 l -8 -3 l 8 -3 z" fill="#a13565"/>
+      </svg>
+      <span class="tag fashion">Fashion &amp; Culture</span>
+      <h2>Couture's fairytale season, still echoing</h2>
+      <p>
+        My favourite section, obviously. The Paris couture reviews kept landing all week, dominated by <b>Matthieu Blazy's</b> Chanel debut — climbing vines, beanstalk heels, and an opening model carrying <mark>a century-old book of fairytales once owned by Coco Chanel herself</mark>. Pierpaolo Piccioli's first Balenciaga couture rounded out a season of debuts critics are calling a generational reset.
+      </p>
+      <div class="mythought">
+        <span class="who">💭 Selina's thought</span>
+        Beanstalk heels. I have no notes, only admiration and mild concern for the models.
+      </div>
+      <p class="source"><a href="https://www.whowhatwear.com/fashion/runway/paris-couture-week-july-2026-runway-trends">Source: Who What Wear / Wallpaper*</a></p>
+    </div>
+
+    <!-- Story 10 -->
+    <div class="story">
+      <svg class="story-img" viewBox="0 0 400 110" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="110" fill="#def0ee"/>
+        <rect x="0" y="88" width="400" height="22" fill="#8fc7bf"/>
+        <circle cx="200" cy="52" r="26" fill="#fff" stroke="#22665e" stroke-width="3"/>
+        <path d="M200 38 l 11 8 l -4 13 h -14 l -4 -13 z" fill="#22665e"/>
+        <path d="M100 40 l 4 10 l 10 4 l -10 4 l -4 10 l -4 -10 l -10 -4 l 10 -4 z" fill="#22665e"/>
+        <path d="M300 40 l 4 10 l 10 4 l -10 4 l -4 10 l -4 -10 l -10 -4 l 10 -4 z" fill="#22665e"/>
+      </svg>
+      <span class="tag sport">Sport</span>
+      <h2>And in Buenos Aires, pure joy</h2>
+      <p>
+        Argentina came from behind to beat England <mark>2–1</mark>, and fans flooded the streets of Buenos Aires deep into the night. Some news needs no analysis, no context, no "why it matters." It just is.
+      </p>
+      <p class="source"><a href="https://www.cnn.com/world">Source: CNN World</a></p>
+    </div>
+
+  </div><!-- /grid -->
+
+  <!-- Sign-off -->
+  <div class="signoff">
+    <img src="portrait.png" alt="Selina">
+    <div class="bubble">
+      Here's the thing I keep turning over: the same week bridges were bombed in one part of the world, a fence quietly came down in another — and people danced where it used to stand. Walls take decades to remove and days to build. Maybe the most useful thing we can do is keep noticing when one disappears.
+      <br><i>Until next Sunday… ☕</i>
+      <span class="name">— Selina</span>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <p class="disclaimer">
+    This newsletter is best enjoyed with a sense of humor — any jokes, puns and side comments are meant with a wink, not as editorial judgment.
+    Market data and forecasts are third-party views for information and entertainment only — not financial advice.
+  </p>
+
+</div>
+
+<script>
+  /* Karten einblenden, sobald sie ins Bild scrollen */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.story, .signoff').forEach((el) => observer.observe(el));
+
+  /* 3D-Tilt: Karten neigen sich zur Maus */
+  document.querySelectorAll('.story').forEach((card) => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      const tiltX = (0.5 - y) * 6;
+      const tiltY = (x - 0.5) * 6;
+      card.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.015)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+</script>
+</body>
+</html>

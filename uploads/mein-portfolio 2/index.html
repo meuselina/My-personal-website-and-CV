@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selina Meusel — Portfolio</title>
+  <meta name="description" content="Selina Meusel — Psychology × Artificial Intelligence. Incoming psychology student in Hamburg, AI workflow builder in San Francisco.">
+
+  <!-- Google Fonts: Anton for loud headlines, Inter for calm body text,
+       Mrs Saint Delafield for the handwritten signature -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">
+
+  <!-- Our own stylesheet — all visual rules live here now -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Our JavaScript. "defer" tells the browser: download it now,
+       but only RUN it after the HTML is fully parsed. -->
+  <script src="js/script.js" defer></script>
+
+</head>
+<body>
+
+  <!-- The interactive dot-grid background. It sits BEHIND everything
+       and is drawn entirely by JavaScript. It reacts to the cursor
+       AND to invisible "light streaks" that keep flying through it. -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <header>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#motivation">Motivation</a>
+      <a href="#experience">Experience &amp; Projects</a>
+      <a href="#interests">Interests &amp; Languages</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- =====================================================
+         HERO — a 260vh tall section. The inner .hero-stage is
+         position:sticky, so it stays pinned while you scroll
+         through the section. JS turns that scroll distance
+         into the shrink → hold → signature sequence.
+         ===================================================== -->
+    <section id="home">
+      <div class="hero-stage">
+
+        <h1 class="hero-name">
+          <span>Selina</span>
+          <span class="last-name">Meusel</span>
+        </h1>
+
+        <div class="portrait" id="portrait">
+          <!-- The COLOR cutout, twice: the bottom copy is turned
+               black & white by a CSS filter, the top copy keeps its
+               real colors and only shows inside the spotlight. -->
+          <img src="assets/portrait_color.png" alt="Portrait of Selina Meusel" class="portrait-base">
+          <img src="assets/portrait_color.png" alt="" aria-hidden="true" class="portrait-color">
+
+          <!-- The signature lives ON the portrait. It stays hidden
+               until the scroll sequence writes it across the image. -->
+          <p class="signature">Selina Meusel</p>
+        </div>
+
+        <!-- Floating "stickers" that slide in around the portrait on
+             load, drift gently, and react to the cursor with parallax. -->
+        <div class="stickers" aria-hidden="true">
+          <div class="sticker sticker-1" data-depth="0.05">
+            <div class="sticker-inner pill">Psychology × AI</div>
+          </div>
+          <div class="sticker sticker-2" data-depth="0.11">
+            <div class="sticker-inner card">
+              <span class="card-title">Stanford</span>
+              <span class="card-sub">Tech Leadership ’25</span>
+            </div>
+          </div>
+          <div class="sticker sticker-3" data-depth="0.08">
+            <div class="sticker-inner tag">HH ⇄ SF</div>
+          </div>
+          <div class="sticker sticker-4" data-depth="0.13">
+            <div class="sticker-inner chip">DE · EN · 中文 · ES</div>
+          </div>
+          <div class="sticker sticker-5" data-depth="0.16">
+            <div class="sticker-inner spark">
+              <svg viewBox="0 0 40 40" width="40" height="40">
+                <path d="M20 0 L24 16 L40 20 L24 24 L20 40 L16 24 L0 20 L16 16 Z" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <p class="hero-tagline">Psychology <strong>×</strong> Artificial Intelligence — Hamburg / San Francisco</p>
+
+      </div>
+    </section>
+
+    <!-- Scrolling marquee strip, landonorris.com style -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Psychology × AI — Strategy — Hamburg ⇄ San Francisco —&nbsp;</span>
+        <span>Psychology × AI — Strategy — Hamburg ⇄ San Francisco —&nbsp;</span>
+      </div>
+    </div>
+
+    <section id="about">
+      <h2 class="reveal">About</h2>
+      <p class="reveal">
+        I am an incoming psychology student at the University of Hamburg with a passion
+        for AI-powered workflows, organizational psychology, and strategy. Between
+        San Francisco and Germany, I have learned to think about technology and human
+        behavior as one.
+      </p>
+    </section>
+
+    <section id="motivation">
+      <h2 class="reveal">Motivation</h2>
+      <p class="reveal">
+        I am fascinated by the intersection of human behavior and technology:
+        how people make decisions, how organizations work — and how artificial
+        intelligence makes both visible and shapeable. My goal is to combine
+        psychological insight with technological competence to make teams and
+        products more human-centered.
+      </p>
+    </section>
+
+    <section id="experience">
+      <h2 class="reveal">Experience &amp; Projects</h2>
+
+      <article class="reveal">
+        <h3>AI Workflow Builder for a Coaching Practice</h3>
+        <p>San Francisco, CA — since April 2026</p>
+        <p>
+          Designed and deployed AI agents using Claude to automate newsletter
+          distribution, inbox triage, and daily research briefings.
+        </p>
+      </article>
+
+      <article class="reveal">
+        <h3>Stanford Technology Leadership Certificate</h3>
+        <p>Stanford University, Continuing Studies — 2025</p>
+        <p>
+          Certificate course on technology-driven business transformation
+          and strategic decision-making.
+        </p>
+      </article>
+    </section>
+
+    <section id="interests">
+      <h2 class="reveal">Interests &amp; Languages</h2>
+
+      <h3 class="reveal">Interests</h3>
+      <ul class="reveal">
+        <li>Artificial intelligence</li>
+        <li>Organizational psychology</li>
+        <li>Strategy &amp; consulting</li>
+      </ul>
+
+      <h3 class="reveal">Languages</h3>
+      <ul class="reveal">
+        <li>German — native</li>
+        <li>English — fluent (C1)</li>
+        <li>Mandarin — B1</li>
+        <li>Spanish — A2</li>
+      </ul>
+    </section>
+
+    <section id="contact">
+      <h2 class="reveal">Contact</h2>
+      <p class="reveal">Email: selina.meusel@icloud.com</p>
+      <p class="reveal">Phone: +1 415 470 4170</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Selina Meusel</p>
+  </footer>
+
+</body>
+</html>

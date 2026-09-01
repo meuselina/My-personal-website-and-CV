@@ -1,0 +1,450 @@
+/* ===== Design tokens =====
+   The whole palette is derived from the portrait photo:
+   its studio backdrop is a mid grey (~rgb(117,117,117)),
+   so the page background BECOMES that backdrop — the photo
+   edges are feathered away and the two melt into each other. */
+:root {
+  --color-bg: #757575;          /* sampled from the photo backdrop */
+  --color-bg-light: #8a8a8a;    /* backdrop highlight (top center) */
+  --color-bg-dark: #5e5e5e;     /* backdrop vignette (edges) */
+  --color-text: #17171a;        /* near-black ink */
+  --color-text-muted: #3b3b40;
+  --color-text-soft: #d9d8d4;   /* light text for dark surfaces */
+  --color-accent: #e10600;      /* racing red */
+
+  --font-display: 'Anton', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-signature: 'Mrs Saint Delafield', cursive;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+main {
+  /* The tilted marquee pokes past the screen edge — cut it off.
+     `clip` (not `hidden`!) because hidden would turn main into a
+     scroll container and silently kill the sticky hero pinning. */
+  overflow-x: clip;
+}
+
+body {
+  /* A soft studio-style gradient: brighter where the photo is
+     brightest (top center), darkening towards the edges. */
+  background:
+    radial-gradient(120% 90% at 50% 15%,
+      var(--color-bg-light) 0%,
+      var(--color-bg) 45%,
+      var(--color-bg-dark) 100%)
+    fixed;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+/* ===== Interactive dot-grid background ===== */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;   /* clicks go straight through it */
+}
+
+header, main, footer {
+  position: relative;     /* lifts content above the canvas */
+  z-index: 1;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--color-accent);
+}
+
+/* ===== Sticky navigation ===== */
+header {
+  position: sticky;
+  top: 0;
+  background-color: rgba(117, 117, 117, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+header nav {
+  display: flex;
+  gap: 2rem;
+  padding: 1.25rem 2rem;
+  flex-wrap: wrap;
+}
+header nav a {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+header nav a:hover {
+  color: var(--color-accent);
+}
+
+section {
+  padding: 6rem 2rem;
+  max-width: 860px;
+  margin: 0 auto;
+  scroll-margin-top: 5rem;  /* anchor jumps stop BELOW the sticky header */
+}
+
+section h2 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 1.5rem;
+  color: var(--color-accent);
+}
+
+section p, section li {
+  color: var(--color-text-muted);
+  max-width: 65ch;
+}
+
+/* =========================================================
+   HERO — the pinned scroll sequence.
+   #home is 260vh tall; .hero-stage sticks to the top of the
+   viewport while you scroll through those 260vh. JS reads
+   the progress (0 → 1) and drives: portrait shrinks, holds,
+   then the signature writes itself across the photo.
+   ========================================================= */
+#home {
+  position: relative;
+  height: 260vh;
+  max-width: none;
+  padding: 0;
+}
+
+.hero-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-name {
+  position: absolute;
+  top: 11%;
+  width: 100%;
+  text-align: center;
+  font-size: clamp(4rem, 17vw, 15rem);
+  line-height: 0.85;
+  color: var(--color-text);
+  z-index: 1;              /* BEHIND the portrait */
+  user-select: none;
+  will-change: transform, opacity;
+}
+.hero-name span {
+  display: block;
+}
+.hero-name .last-name {
+  /* Outlined text, landonorris.com style: same font, transparent
+     fill, thin ink-coloured stroke. */
+  color: transparent;
+  -webkit-text-stroke: 2px var(--color-text);
+}
+
+/* ===== The portrait =====
+   A color CUTOUT (transparent background): only Selina herself,
+   no photo backdrop — so the giant name behind her stays
+   readable right up to her silhouette. The cutout floats on
+   the grey studio background of the page. */
+.portrait {
+  position: absolute;
+  bottom: 0;
+  /* Centered by LAYOUT (left+right 0, margin auto), not by a
+     transform — a translateX(-50%) would drift sideways once
+     JS scales the portrait down during the scroll sequence. */
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  transform-origin: bottom center;   /* shrinks towards the ground */
+  height: 96vh;
+  width: calc(96vh * 2 / 3);         /* matches the 1100×1650 cutout */
+  z-index: 2;
+  cursor: crosshair;
+  will-change: transform, scale;
+  /* Soft fade at the bottom edge only, so the cut where the
+     body meets the viewport edge doesn't look abrupt. */
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 12%);
+          mask-image: linear-gradient(to top, transparent 0%, black 12%);
+}
+
+.portrait img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+}
+
+/* The bottom layer is the SAME color photo, desaturated by CSS.
+   filter: grayscale(100%) removes all color at render time —
+   the image file itself stays untouched. */
+.portrait-base {
+  filter: grayscale(100%);
+}
+
+/* ===== The spotlight =====
+   The top copy keeps its true colors and only shows inside the
+   cursor's spotlight circle — the photo "develops" into color
+   wherever the pointer sweeps. */
+.portrait-color {
+  -webkit-mask-image: radial-gradient(
+    circle var(--r, 0px) at var(--mx, 50%) var(--my, 50%),
+    black 55%,
+    transparent 100%
+  );
+          mask-image: radial-gradient(
+    circle var(--r, 0px) at var(--mx, 50%) var(--my, 50%),
+    black 55%,
+    transparent 100%
+  );
+}
+
+/* ===== Signature ON the photo =====
+   Hidden by default (fully clipped). The scroll sequence in
+   JS wipes it in from left to right, like it's being written. */
+.signature {
+  position: absolute;
+  left: 50%;
+  top: 64%;
+  transform: translateX(-50%) rotate(-5deg);
+  z-index: 3;
+  font-family: var(--font-signature);
+  font-size: clamp(3rem, 6vw, 5rem);
+  white-space: nowrap;
+  color: #f4f3ef;                       /* light ink on the dark sweater */
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+  user-select: none;
+  pointer-events: none;
+  clip-path: inset(-20% 100% -20% 0);   /* fully hidden */
+  opacity: 0;
+}
+
+/* =========================================================
+   STICKERS — the elements that swirl around the head.
+   ========================================================= */
+.stickers {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.sticker {
+  position: absolute;
+  opacity: 0;
+  scale: 0.4;
+  will-change: translate, scale, opacity;
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    scale   0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+body.is-loaded .sticker { opacity: 1; scale: 1; }
+body.is-loaded .sticker-1 { transition-delay: 0.30s; }
+body.is-loaded .sticker-2 { transition-delay: 0.45s; }
+body.is-loaded .sticker-3 { transition-delay: 0.60s; }
+body.is-loaded .sticker-4 { transition-delay: 0.75s; }
+body.is-loaded .sticker-5 { transition-delay: 0.90s; }
+
+.sticker-1 { top: 24%;  left: 12%; }
+.sticker-2 { top: 38%;  right: 10%; }
+.sticker-3 { top: 60%;  left: 16%; }
+.sticker-4 { top: 72%;  right: 15%; }
+.sticker-5 { top: 18%;  right: 26%; color: var(--color-accent); }
+
+.sticker-inner {
+  display: inline-block;
+  animation: float 6s ease-in-out infinite;
+}
+.sticker-1 .sticker-inner { rotate: -7deg; animation-duration: 7s; }
+.sticker-2 .sticker-inner { rotate:  5deg; animation-duration: 5.5s; animation-delay: -2s; }
+.sticker-3 .sticker-inner { rotate:  4deg; animation-duration: 6.5s; animation-delay: -1s; }
+.sticker-4 .sticker-inner { rotate: -5deg; animation-duration: 5s;   animation-delay: -3s; }
+.sticker-5 .sticker-inner { animation-duration: 8s; animation-delay: -4s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+/* --- Sticker looks --- */
+.pill {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 1rem;
+  background: var(--color-accent);
+  color: #f4f3ef;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+.card {
+  background: #f4f3ef;
+  color: var(--color-text);
+  padding: 0.8rem 1.2rem;
+  border-radius: 6px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+.card-title {
+  display: block;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+.card-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: #55555a;
+  letter-spacing: 0.04em;
+}
+.tag {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+  border: 2px solid var(--color-text);
+  padding: 0.35rem 0.9rem;
+}
+.chip {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+  border: 1px solid var(--color-text-muted);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  background: rgba(244, 243, 239, 0.35);
+}
+.spark svg { display: block; }
+
+.hero-tagline {
+  position: absolute;
+  bottom: 2rem;
+  z-index: 3;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-align: center;
+  width: 100%;
+}
+.hero-tagline strong {
+  color: var(--color-accent);
+}
+
+/* =========================================================
+   MARQUEE — the endless red ticker strip
+   ========================================================= */
+.marquee {
+  position: relative;
+  z-index: 1;
+  background: var(--color-accent);
+  rotate: -1.5deg;
+  scale: 1.05;
+  overflow: hidden;
+  padding: 0.6rem 0;
+  margin: -1rem 0 2rem;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 18s linear infinite;
+}
+.marquee-track span {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: 1.3rem;
+  letter-spacing: 0.06em;
+  color: #17171a;
+  white-space: nowrap;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* =========================================================
+   SCROLL REVEALS
+   ========================================================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(45px);
+  transition:
+    opacity   0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===== Content sections ===== */
+article {
+  margin-bottom: 2.5rem;
+  padding-left: 1.5rem;
+  border-left: 3px solid var(--color-accent);
+}
+article h3 {
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+ul {
+  list-style: none;
+}
+li {
+  margin-bottom: 0.4rem;
+}
+
+footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* ===== Small screens ===== */
+@media (max-width: 720px) {
+  .sticker-2, .sticker-4 { display: none; }
+  .sticker-1 { top: 20%; left: 5%; }
+  .sticker-3 { top: 64%; left: 4%; }
+  .sticker-5 { top: 14%; right: 10%; }
+  .portrait { height: 78vh; }
+  .marquee-track span { font-size: 1rem; }
+}
+
+/* ===== Accessibility: reduced motion =====
+   Everything decorative freezes; the signature is simply
+   visible on the photo without the scroll choreography. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  #home { height: 100vh; }
+  .sticker,
+  body.is-loaded .sticker { transition: none; opacity: 1; scale: 1; }
+  .sticker-inner { animation: none; }
+  .signature { clip-path: none; opacity: 1; }
+  .marquee-track { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}

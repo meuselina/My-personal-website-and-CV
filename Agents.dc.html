@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<script src="./translations.js"></script>
+<script>
+  // Fonts werden erst NACH dem window-load-Event injiziert: ein haengender
+  // CDN-Abruf kann das load-Event so nie blockieren (Fonts swappen per FOUT ein).
+  (function () {
+    var inject = function () {
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=Mrs+Saint+Delafield&display=swap';
+      document.head.appendChild(l);
+    };
+    if (document.readyState === 'complete') inject();
+    else window.addEventListener('load', inject);
+  })();
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #0b0b0d; color: #f4f3ef; font-family: 'Inter', sans-serif; line-height: 1.6; }
+  a { color: #f4f3ef; text-decoration: none; }
+  a:hover { color: var(--acc, #e10600); }
+  ::selection { background: var(--acc, #e10600); color: #0b0b0d; }
+  @keyframes pulse { 0%, 100% { opacity: 1; scale: 1; } 50% { opacity: 0.35; scale: 0.75; } }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+</style>
+</helmet>
+
+<header id="site-header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 20; background: rgba(11, 11, 13, 0.72); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(244, 243, 239, 0.08); transition: background 0.35s, backdrop-filter 0.35s, border-color 0.35s; pointer-events: none;">
+  <nav style="display: flex; align-items: center; gap: clamp(0.6rem, 2vw, 1.4rem); padding: 1.1rem clamp(0.8rem, 3vw, 2rem); flex-wrap: nowrap; pointer-events: none;">
+    <a href="Selina Portfolio.dc.html" data-navpill="" style="font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.08em; color: var(--acc, #e10600); pointer-events: auto; transition: background 0.35s, border-color 0.35s; padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(244, 243, 239, 0.14);">SM</a>
+    <a href="Selina Portfolio.dc.html#agents" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f4f3ef; margin-left: auto; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.45rem 1.1rem; transition: border-color 0.25s, color 0.25s, background 0.35s; pointer-events: auto; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px);" style-hover="color: var(--acc, #e10600); border-color: var(--acc, #e10600);"><span aria-hidden="true" style="font-size: 1rem; line-height: 1;">←</span><span data-mobilelabel="">Back to portfolio</span></a>
+    <div data-navpill="keepborder" style="display: flex; align-items: center; gap: 2px; border: 1px solid rgba(244, 243, 239, 0.25); border-radius: 999px; padding: 3px; flex-shrink: 0; white-space: nowrap; pointer-events: auto; background: rgba(11, 11, 13, 0.6); backdrop-filter: blur(8px);">
+      <button id="lang-en" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: #f4f3ef; color: #0b0b0d;">EN</button>
+      <button id="lang-de" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: transparent; color: #9a9aa0;">DE</button>
+      <button id="lang-zh" data-no-i18n="true" style="border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; white-space: nowrap; padding: 0.28rem 0.6rem; border-radius: 999px; background: transparent; color: #9a9aa0;">中文</button>
+    </div>
+  </nav>
+</header>
+
+<canvas id="agents-bg" aria-hidden="true" style="position: fixed; inset: 0; z-index: 0; pointer-events: none;"></canvas>
+
+<main style="position: relative; z-index: 1; overflow-x: clip; padding-top: 4.4rem;">
+
+  <section data-screen-label="Agents Intro" style="max-width: 1150px; margin: 0 auto; padding: clamp(5rem, 12vh, 8rem) clamp(1.2rem, 5vw, 2.5rem) clamp(3rem, 7vh, 5rem); text-align: center;">
+    <p style="display: inline-flex; align-items: center; gap: 0.55rem; margin: 0 0 1.5rem; padding: 0.5rem 1.1rem; border-radius: 999px; border: 1px solid rgba(244, 243, 239, 0.25); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: #d9d8d4;"><span aria-hidden="true" style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>4 agents · always on</p>
+    <h1 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(3rem, 10vw, 7rem); line-height: 0.95; margin: 0;">Meet The <span style="color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">Agents</span></h1>
+    <p style="max-width: 58ch; margin: clamp(1.5rem, 4vh, 2.5rem) auto 0; color: #b9b9be; font-size: 1.05rem;">Four autonomous agents, built from scratch on Claude, each running real day-to-day operations on its own schedule. Here is what each one does, why it matters, and how you can subscribe to the weekly newsletter.</p>
+  </section>
+
+  <div aria-hidden="true" style="position: relative; z-index: 2; background: var(--acc, #e10600); rotate: 1.2deg; scale: 1.05; overflow: hidden; padding: 0.6rem 0; margin: 1rem 0 2rem;">
+    <div style="display: flex; width: max-content; animation: marquee 20s linear infinite;">
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.2rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Autonomous · Scheduled · Self-running · Built on Claude ·&nbsp;</span>
+      <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 1.2rem; letter-spacing: 0.06em; color: #0b0b0d; white-space: nowrap;">Autonomous · Scheduled · Self-running · Built on Claude ·&nbsp;</span>
+    </div>
+  </div>
+
+  <section id="agent-newsletter" data-screen-label="Newsletter Agent" style="position: relative; max-width: 1150px; margin: 0 auto; padding: clamp(4rem, 9vh, 6rem) clamp(1.2rem, 5vw, 2.5rem); border-top: 1px solid rgba(244, 243, 239, 0.1);">
+    <span aria-hidden="true" style="position: absolute; top: 0.5rem; right: 0; font-family: 'Anton', sans-serif; font-size: clamp(8rem, 22vw, 18rem); line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(244, 243, 239, 0.09); pointer-events: none; user-select: none;">01</span>
+    <div data-reveal="" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(2rem, 5vw, 4rem); align-items: center;">
+      <div style="display: flex; flex-direction: column; gap: 1rem; position: relative; padding: clamp(1.2rem, 3vw, 2rem); border-radius: 16px; background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(244, 243, 239, 0.16) 0%, rgba(244, 243, 239, 0.08) 40%, rgba(244, 243, 239, 0.03) 65%, transparent 85%);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">01</span>
+        <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.1; margin: 0;">Weekly Newsletter Agent</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Weekly</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">World politics</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--acc, #e10600); border-radius: 999px; padding: 0.3rem 0.8rem; color: var(--acc, #e10600);">Fully autonomous</span>
+        </div>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #2ecc71;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Active since April 2026</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;">A fully autonomous weekly newsletter: every week, the agent researches the current political events around the world, condenses them into a clear, readable summary, and delivers the finished issue: researched, written, and sent without anyone touching a keyboard.</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;"><strong style="color: rgb(244, 243, 239);">Why it’s useful:</strong> one weekly briefing sent to your email or text instead of a hundred headlines: global events, put in context. And the same architecture is flexible: an agent like this can be programmed to research any topic you choose and deliver it weekly or even daily.</p>
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.8rem; padding: 1.2rem; background: #141416; border: 1px solid rgba(244, 243, 239, 0.12);">
+          <span style="font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.06em; font-size: 1rem;">Sign up for the weekly newsletter</span>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9a9aa0;">Choose your edition</span>
+            <button id="ed-en-1" style="cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; background: transparent; color: #9a9aa0;">English edition</button>
+            <button id="ed-de-1" style="cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; background: transparent; color: #9a9aa0;">German edition</button>
+          </div>
+          <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+            <input id="email-1" type="email" placeholder="your@email.com" style="flex: 1; min-width: 180px; background: #0b0b0d; border: 1px solid rgba(244, 243, 239, 0.25); color: #f4f3ef; padding: 0.7rem 0.9rem; font-family: 'Inter', sans-serif; font-size: 0.95rem; border-radius: 4px;">
+            <button onClick="{{ signup1 }}" style="border: none; cursor: pointer; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.95rem; background: var(--acc, #e10600); color: #f4f3ef; padding: 0.7rem 1.4rem; border-radius: 4px;">Subscribe</button>
+          </div>
+          <span data-no-i18n="true" style="font-size: 0.8rem; color: {{ msg1Color }}; min-height: 1.2em;">{{ msg1 }}</span>
+          <span style="font-size: 0.78rem; color: #77777d;">Your signup goes straight to the agent: it adds your address to its distribution list and includes you in the next issue.</span>
+          <a href="Newsletter.dc.html" style="align-self: flex-start; margin-top: 0.3rem; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f4f3ef; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.45rem 1.1rem; transition: border-color 0.25s, color 0.25s;" style-hover="color: var(--acc, #e10600); border-color: var(--acc, #e10600);">Read the latest issue →</a>
+        </div>
+      </div>
+      <div style="aspect-ratio: 16 / 9; background: #141416; border: 1px solid rgba(244, 243, 239, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem;">
+        <span aria-hidden="true" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--acc, #e10600); display: flex; align-items: center; justify-content: center;"><span style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 20px solid var(--acc, #e10600); margin-left: 5px;"></span></span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">Demo video coming soon</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="agent-email" data-screen-label="Email Triage Agent" style="position: relative; max-width: 1150px; margin: 0 auto; padding: clamp(4rem, 9vh, 6rem) clamp(1.2rem, 5vw, 2.5rem); border-top: 1px solid rgba(244, 243, 239, 0.1);">
+    <span aria-hidden="true" style="position: absolute; top: 0.5rem; left: 0; font-family: 'Anton', sans-serif; font-size: clamp(8rem, 22vw, 18rem); line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(244, 243, 239, 0.09); pointer-events: none; user-select: none;">02</span>
+    <div data-reveal="" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(2rem, 5vw, 4rem); align-items: center;">
+      <div style="order: 2; display: flex; flex-direction: column; gap: 1rem; position: relative; padding: clamp(1.2rem, 3vw, 2rem); border-radius: 16px; background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(244, 243, 239, 0.16) 0%, rgba(244, 243, 239, 0.08) 40%, rgba(244, 243, 239, 0.03) 65%, transparent 85%);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">02</span>
+        <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.1; margin: 0;">Email Triage Agent</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Daily</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Inbox zero</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--acc, #e10600); border-radius: 999px; padding: 0.3rem 0.8rem; color: var(--acc, #e10600);">Suggested replies</span>
+        </div>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #2ecc71;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Active since April 2026</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;">Reads an inbox every morning, sorts messages by urgency and topic, and prepares suggested replies in a consistent voice, turning a daily chore into a two-minute review.</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;"><strong style="color: #f4f3ef;">Why it’s useful:</strong> nothing urgent slips through, routine mail answers itself, and the human only decides, never digs.</p>
+      </div>
+      <div style="order: 1; aspect-ratio: 16 / 9; background: #141416; border: 1px solid rgba(244, 243, 239, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem;">
+        <span aria-hidden="true" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--acc, #e10600); display: flex; align-items: center; justify-content: center;"><span style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 20px solid var(--acc, #e10600); margin-left: 5px;"></span></span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">Demo video coming soon</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="agent-research" data-screen-label="Research Agent" style="position: relative; max-width: 1150px; margin: 0 auto; padding: clamp(4rem, 9vh, 6rem) clamp(1.2rem, 5vw, 2.5rem); border-top: 1px solid rgba(244, 243, 239, 0.1);">
+    <span aria-hidden="true" style="position: absolute; top: 0.5rem; right: 0; font-family: 'Anton', sans-serif; font-size: clamp(8rem, 22vw, 18rem); line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(244, 243, 239, 0.09); pointer-events: none; user-select: none;">03</span>
+    <div data-reveal="" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(2rem, 5vw, 4rem); align-items: center;">
+      <div style="display: flex; flex-direction: column; gap: 1rem; position: relative; padding: clamp(1.2rem, 3vw, 2rem); border-radius: 16px; background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(244, 243, 239, 0.16) 0%, rgba(244, 243, 239, 0.08) 40%, rgba(244, 243, 239, 0.03) 65%, transparent 85%);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">03</span>
+        <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.1; margin: 0;">Research Agent</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Daily</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Curated sources</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--acc, #e10600); border-radius: 999px; padding: 0.3rem 0.8rem; color: var(--acc, #e10600);">Key insights</span>
+        </div>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #2ecc71;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Active since April 2026</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;">Scans chosen sources every day and delivers a condensed research briefing: the three to five insights that actually matter, ready before the day begins.</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;"><strong style="color: #f4f3ef;">Why it’s useful:</strong> staying current without reading hours of material. The agent reads wide so the human can think deep.</p>
+      </div>
+      <div style="aspect-ratio: 16 / 9; background: #141416; border: 1px solid rgba(244, 243, 239, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem;">
+        <span aria-hidden="true" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--acc, #e10600); display: flex; align-items: center; justify-content: center;"><span style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 20px solid var(--acc, #e10600); margin-left: 5px;"></span></span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">Demo video coming soon</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="agent-todo" data-screen-label="To-Do Delivery System" style="position: relative; max-width: 1150px; margin: 0 auto; padding: clamp(4rem, 9vh, 6rem) clamp(1.2rem, 5vw, 2.5rem) clamp(6rem, 14vh, 9rem); border-top: 1px solid rgba(244, 243, 239, 0.1);">
+    <span aria-hidden="true" style="position: absolute; top: 0.5rem; left: 0; font-family: 'Anton', sans-serif; font-size: clamp(8rem, 22vw, 18rem); line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(244, 243, 239, 0.09); pointer-events: none; user-select: none;">04</span>
+    <div data-reveal="" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(2rem, 5vw, 4rem); align-items: center;">
+      <div style="order: 2; display: flex; flex-direction: column; gap: 1rem; position: relative; padding: clamp(1.2rem, 3vw, 2rem); border-radius: 16px; background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(244, 243, 239, 0.16) 0%, rgba(244, 243, 239, 0.08) 40%, rgba(244, 243, 239, 0.03) 65%, transparent 85%);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">04</span>
+        <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.1; margin: 0;">To-Do Delivery System</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Scheduled</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">One list</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--acc, #e10600); border-radius: 999px; padding: 0.3rem 0.8rem; color: var(--acc, #e10600);">Prioritized</span>
+        </div>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #2ecc71;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ecc71; animation: pulse 1.8s ease-in-out infinite;"></span>Active since April 2026</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;">Collects open tasks from email, notes, and calendar, prioritizes them, and delivers one clear to-do list on a fixed schedule: a quiet daily heartbeat.</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;"><strong style="color: #f4f3ef;">Why it’s useful:</strong> one list instead of five apps. The day starts with clarity, not with collecting.</p>
+      </div>
+      <div style="order: 1; aspect-ratio: 16 / 9; background: #141416; border: 1px solid rgba(244, 243, 239, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem;">
+        <span aria-hidden="true" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--acc, #e10600); display: flex; align-items: center; justify-content: center;"><span style="width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 20px solid var(--acc, #e10600); margin-left: 5px;"></span></span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">Demo video coming soon</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="agent-jarvis" data-screen-label="Jarvis" style="position: relative; max-width: 1150px; margin: 0 auto; padding: clamp(4rem, 9vh, 6rem) clamp(1.2rem, 5vw, 2.5rem) clamp(6rem, 14vh, 9rem); border-top: 1px solid rgba(244, 243, 239, 0.1);">
+    <span aria-hidden="true" style="position: absolute; top: 0.5rem; right: 0; font-family: 'Anton', sans-serif; font-size: clamp(8rem, 22vw, 18rem); line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(244, 243, 239, 0.09); pointer-events: none; user-select: none;">05</span>
+    <div data-reveal="" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(2rem, 5vw, 4rem); align-items: center;">
+      <div style="order: 1; display: flex; flex-direction: column; gap: 1rem; position: relative; padding: clamp(1.2rem, 3vw, 2rem); border-radius: 16px; background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(244, 243, 239, 0.16) 0%, rgba(244, 243, 239, 0.08) 40%, rgba(244, 243, 239, 0.03) 65%, transparent 85%);">
+        <span aria-hidden="true" style="font-family: 'Anton', sans-serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">05</span>
+        <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.1; margin: 0;">Jarvis</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Voice first</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid rgba(244, 243, 239, 0.3); border-radius: 999px; padding: 0.3rem 0.8rem; color: #d9d8d4;">Memory & initiative</span>
+          <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid #e8b93c; border-radius: 999px; padding: 0.3rem 0.8rem; color: #e8b93c;">In planning</span>
+        </div>
+        <p style="display: flex; align-items: center; gap: 0.45rem; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.72rem; color: #e8b93c;"><span aria-hidden="true" style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; border: 1px solid #e8b93c;"></span>Next project</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;">A general assistant you can simply talk to. Jarvis answers questions, looks things up, summarizes what it finds, drafts texts and emails, keeps track of calendar and open tasks, and remembers earlier conversations. Beyond that it works on its own: it operates the computer directly, runs jobs in the background while you do something else, brings up what was forgotten, suggests the next step before anyone asks, and designs and starts projects of its own. It works faster and more efficiently than doing all of it by hand.</p>
+        <p style="color: #b9b9be; margin: 0; font-size: 1rem;"><strong style="color: #f4f3ef;">Why it is next:</strong> the interesting part is no longer a single automated task, it is memory, initiative, and knowing when to act without being asked. An assistant that keeps context across days and does the work on its own is a much harder and much more useful system to build.</p>
+      </div>
+      <div style="order: 2; aspect-ratio: 16 / 9; background: #141416; border: 1px solid rgba(244, 243, 239, 0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem;">
+        <span aria-hidden="true" style="width: 64px; height: 64px; border-radius: 50%; border: 2px dashed rgba(244, 243, 239, 0.4);"></span>
+        <span style="text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: #9a9aa0;">In development</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" data-screen-label="Contact" style="max-width: 900px; margin: 0 auto; padding: clamp(4rem, 9vh, 6rem) clamp(1.2rem, 5vw, 2.5rem) clamp(6rem, 14vh, 9rem);">
+    <div data-reveal="" style="background: #141416; border: 1px solid rgba(244, 243, 239, 0.12); padding: clamp(2rem, 5vw, 3.5rem); display: flex; flex-direction: column; gap: 1.2rem;">
+      <h2 style="font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1; margin: 0;">Get In <span style="color: transparent; -webkit-text-stroke: 2px var(--acc, #e10600);">Touch</span></h2>
+      <p style="color: #b9b9be; margin: 0; font-size: 1rem;">Curious about an agent, or want one built for your own workflow? Write me a message. It goes straight to my inbox.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem;">
+        <input id="contact-name" type="text" placeholder="Your name" style="background: #0b0b0d; border: 1px solid rgba(244, 243, 239, 0.25); color: #f4f3ef; padding: 0.8rem 0.9rem; font-family: 'Inter', sans-serif; font-size: 0.95rem; border-radius: 4px;">
+        <input id="contact-email" type="email" placeholder="your@email.com" style="background: #0b0b0d; border: 1px solid rgba(244, 243, 239, 0.25); color: #f4f3ef; padding: 0.8rem 0.9rem; font-family: 'Inter', sans-serif; font-size: 0.95rem; border-radius: 4px;">
+      </div>
+      <textarea id="contact-message" rows="5" placeholder="Your message…" style="background: #0b0b0d; border: 1px solid rgba(244, 243, 239, 0.25); color: #f4f3ef; padding: 0.8rem 0.9rem; font-family: 'Inter', sans-serif; font-size: 0.95rem; border-radius: 4px; resize: vertical;"></textarea>
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <button onClick="{{ sendContact }}" style="border: none; cursor: pointer; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1rem; background: var(--acc, #e10600); color: #f4f3ef; padding: 0.85rem 2rem; border-radius: 4px; transition: scale 0.25s;">Send message →</button>
+        <span data-no-i18n="true" style="font-size: 0.85rem; color: {{ contactMsgColor }}; min-height: 1.2em;">{{ contactMsg }}</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer style="text-align: center; padding: 2.5rem 2rem; color: #55555a; font-size: 0.8rem; border-top: 1px solid rgba(244, 243, 239, 0.08);">
+  <p style="margin: 0;">© 2026 Selina Meusel · <a href="Selina Portfolio.dc.html" style="color: #9a9aa0;">Back to portfolio</a></p>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { msgs: {} };
+
+
+  _bindHeader() {
+    const h = document.getElementById('site-header');
+    if (!h || h.dataset.hdrBound) return;
+    h.dataset.hdrBound = '1';
+    const pills = [...h.querySelectorAll('[data-navpill]')];
+    const apply = () => {
+      const s = window.scrollY > 40;
+      h.style.background = s ? 'transparent' : 'rgba(11, 11, 13, 0.72)';
+      h.style.backdropFilter = s ? 'none' : 'blur(10px)';
+      h.style.borderBottom = s ? '1px solid transparent' : '1px solid rgba(244, 243, 239, 0.08)';
+      for (const p of pills) {
+        p.style.background = s ? 'rgba(11, 11, 13, 0.6)' : 'transparent';
+        p.style.backdropFilter = s ? 'blur(8px)' : 'none';
+        if (p.dataset.navpill !== 'keepborder') p.style.borderColor = s ? 'rgba(244, 243, 239, 0.14)' : 'transparent';
+      }
+    };
+    apply();
+    window.addEventListener('scroll', apply, { passive: true });
+  }
+
+
+  _bindMobileNav() {
+    const labels = [...document.querySelectorAll('[data-mobilelabel]')];
+    const apply = () => {
+      const small = window.innerWidth < 620;
+      for (const el of labels) el.style.display = small ? 'none' : 'inline';
+    };
+    apply();
+    if (!this._navResizeBound) {
+      this._navResizeBound = true;
+      window.addEventListener('resize', apply);
+    }
+  }
+
+  componentDidMount() {
+    this._bindHeader();
+    this._bindMobileNav();
+    setTimeout(() => this._bindMobileNav(), 600);
+    this._applyLang();
+    this._paintLangButtons();
+    this._bindLangButtons();
+    this._bindEditionButtons();
+    setTimeout(() => { this._applyLang(); this._paintLangButtons(); this._bindLangButtons(); this._bindEditionButtons(); }, 600);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // scroll reveals
+    this._observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'none';
+          this._observer.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.12 });
+    document.querySelectorAll('[data-reveal]').forEach((el) => {
+      if (reducedMotion) return;
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight) return;
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(45px)';
+      el.style.transition = 'opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1)';
+      this._observer.observe(el);
+    });
+
+    // subtle drifting dot grid
+    const canvas = document.getElementById('agents-bg');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const SPACING = 34;
+    let dots = [], dpr = 1;
+    let mx = -9999, my = -9999, ex = -9999, ey = -9999;
+    const build = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      dots = [];
+      for (let y = SPACING / 2; y < window.innerHeight; y += SPACING)
+        for (let x = SPACING / 2; x < window.innerWidth; x += SPACING)
+          dots.push({ x, y, ph: Math.random() * 6.28, ph2: Math.random() * 6.28, amp: 3 + Math.random() * 7, spd: 0.15 + Math.random() * 0.4 });
+    };
+    build();
+    const onResize = () => build();
+    const onMove = (e) => { mx = e.clientX; my = e.clientY; };
+    window.addEventListener('resize', onResize);
+    window.addEventListener('pointermove', onMove);
+    const accRGB = () => {
+      const acc = this.props.accentColor ?? '#e10600';
+      const m = /^#?([0-9a-f]{6})$/i.exec(acc.trim());
+      const hex = m ? m[1] : 'e10600';
+      return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)];
+    };
+    let raf;
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      ex += (mx - ex) * 0.15; ey += (my - ey) * 0.15;
+      const now = performance.now() / 1000;
+      const [ar, ag, ab] = accRGB();
+      for (const d of dots) {
+        const bx = d.x + (reducedMotion ? 0 : Math.cos(now * d.spd + d.ph) * d.amp);
+        const by = d.y + (reducedMotion ? 0 : Math.sin(now * d.spd * 0.8 + d.ph2) * d.amp);
+        const dist = Math.hypot(bx - ex, by - ey);
+        const t = Math.max(0, 1 - dist / 170);
+        const r = Math.round(70 + (ar - 70) * t);
+        const g = Math.round(70 + (ag - 70) * t);
+        const b = Math.round(74 + (ab - 74) * t);
+        ctx.beginPath();
+        ctx.arc(bx, by, 1 + t * 1.4, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (0.13 + t * 0.6) + ')';
+        ctx.fill();
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    this._cleanup = () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('pointermove', onMove);
+    };
+  }
+
+  componentDidUpdate() {
+    this._scheduleLang();
+  }
+
+  _getLang() {
+    if (!this._lang) {
+      let saved = 'en';
+      try { saved = localStorage.getItem('sm-lang') || 'en'; } catch (e) {}
+      this._lang = saved;
+    }
+    return this._lang;
+  }
+
+  _setLang(l) {
+    this._lang = l;
+    try { localStorage.setItem('sm-lang', l); } catch (e) {}
+    // Defer the DOM translation until the event dispatch has fully unwound —
+    // mutating text nodes synchronously inside the runtime's synthetic event
+    // path locks the main thread.
+    setTimeout(() => {
+      this._applyLang();
+      this._paintLangButtons();
+    }, 0);
+  }
+
+  _getEdition() {
+    if (!this._edition) {
+      let saved = null;
+      try { saved = localStorage.getItem('sm-nl-edition'); } catch (e) {}
+      this._edition = saved || (this._getLang() === 'de' ? 'de' : 'en');
+    }
+    return this._edition;
+  }
+
+  _paintEditionButtons() {
+    const ed = this._getEdition();
+    [['ed-en-1', 'en'], ['ed-de-1', 'de']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.background = ed === l ? '#f4f3ef' : 'transparent';
+      el.style.color = ed === l ? '#0b0b0d' : '#9a9aa0';
+      el.style.borderColor = ed === l ? '#f4f3ef' : 'rgba(244, 243, 239, 0.3)';
+    });
+  }
+
+  _bindEditionButtons() {
+    [['ed-en-1', 'en'], ['ed-de-1', 'de']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el || el.dataset.edBound) return;
+      el.dataset.edBound = '1';
+      el.addEventListener('click', () => {
+        this._edition = l;
+        try { localStorage.setItem('sm-nl-edition', l); } catch (e) {}
+        this._paintEditionButtons();
+      });
+    });
+    this._paintEditionButtons();
+  }
+
+  _bindLangButtons() {
+    [['lang-en', 'en'], ['lang-de', 'de'], ['lang-zh', 'zh']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el || el.dataset.langBound) return;
+      el.dataset.langBound = '1';
+      el.addEventListener('click', () => this._setLang(l));
+    });
+  }
+
+  _paintLangButtons() {
+    const lang = this._getLang();
+    [['lang-en', 'en'], ['lang-de', 'de'], ['lang-zh', 'zh']].forEach(([id, l]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.background = lang === l ? '#f4f3ef' : 'transparent';
+      el.style.color = lang === l ? '#0b0b0d' : '#9a9aa0';
+    });
+  }
+
+  _scheduleLang() {
+    if (this._langTimer) return;
+    this._langTimer = setTimeout(() => {
+      this._langTimer = null;
+      this._applyLang();
+    }, 50);
+  }
+
+  _applyLang() {
+    if (this._langApplying) return;
+    const dict = window.SM_I18N;
+    if (!dict) { this._langRetries = (this._langRetries || 0) + 1; if (this._langRetries < 50) setTimeout(() => this._applyLang(), 200); return; }
+    this._langApplying = true;
+    try {
+      this._applyLangInner(dict);
+    } finally {
+      this._langApplying = false;
+    }
+  }
+
+  _applyLangInner(dict) {
+    const lang = this._getLang();
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang;
+    if (!this._i18nNodes) this._i18nNodes = new Map();
+    const translateIn = (root) => {
+      const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = tw.nextNode())) {
+        if (node.parentElement && node.parentElement.closest('[data-no-i18n]')) continue;
+        let en = this._i18nNodes.get(node);
+        if (en === undefined) {
+          const key = (node.nodeValue || '').trim();
+          if (key && dict[key]) {
+            en = key;
+            this._i18nNodes.set(node, key);
+          } else {
+            continue;
+          }
+        }
+        const entry = dict[en];
+        const txt = lang === 'en' ? en : (entry && entry[lang]) || en;
+        const m = (node.nodeValue || '').match(/^(\s*)[\s\S]*?(\s*)$/);
+        const next = (m ? m[1] : '') + txt + (m ? m[2] : '');
+        if ((node.nodeValue || '') !== next) node.nodeValue = next;
+      }
+    };
+    // Translate each region while it is DETACHED from the document: outside
+    // observers then see a few childList records instead of hundreds of
+    // characterData mutations (which caused multi-second main-thread stalls).
+    const regions = [...document.querySelectorAll('header, main > *')];
+    for (const region of regions) {
+      const parent = region.parentNode;
+      if (!parent) continue;
+      const anchor = region.nextSibling;
+      parent.removeChild(region);
+      try { translateIn(region); } finally { parent.insertBefore(region, anchor); }
+    }
+    translateIn(document.body);
+    document.querySelectorAll('[placeholder]').forEach((el) => {
+      const en = el.dataset.i18nPh || el.getAttribute('placeholder');
+      const entry = dict[en];
+      if (!entry) return;
+      el.dataset.i18nPh = en;
+      el.setAttribute('placeholder', lang === 'en' ? en : entry[lang] || en);
+    });
+  }
+
+  componentWillUnmount() {
+    if (this._cleanup) this._cleanup();
+    if (this._observer) this._observer.disconnect();
+  }
+
+  renderVals() {
+    const lang = this._getLang();
+    const setLang = (l) => this._setLang(l);
+    const bg = (l) => (lang === l ? '#f4f3ef' : 'transparent');
+    const col = (l) => (lang === l ? '#0b0b0d' : '#9a9aa0');
+    const T = (s) => {
+      const d = window.SM_I18N;
+      return (lang !== 'en' && d && d[s] && d[s][lang]) || s;
+    };
+    const subjects = {
+      1: 'Weekly Newsletter Agent',
+    };
+    const mk = (id) => () => {
+      const inp = document.getElementById('email-' + id);
+      const val = inp ? inp.value.trim().toLowerCase() : '';
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val)) {
+        this.setState((s) => ({ msgs: { ...s.msgs, [id]: 'err' } }));
+        return;
+      }
+      let subs = [];
+      try { subs = JSON.parse(localStorage.getItem('sm-newsletter-subs') || '[]'); } catch (e) {}
+      if (subs.includes(val)) {
+        this.setState((s) => ({ msgs: { ...s.msgs, [id]: 'dup' } }));
+        return;
+      }
+      // Maschinenlesbares Format: der Newsletter-Agent parst Betreff/Body und
+      // nimmt die Adresse automatisch in seine Empfaengerliste auf.
+      const ed = this._getEdition();
+      const subject = 'NEWSLETTER SIGNUP: ' + val;
+      const body = 'action: subscribe\nlist: weekly-newsletter\nemail: ' + val + '\nlanguage: ' + ed + '\nsource: portfolio-website\n\n(Automated signup from the Weekly Newsletter Agent page. Add this address to the newsletter distribution list.)';
+      window.location.href = 'mailto:selina.meusel@icloud.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      try { localStorage.setItem('sm-newsletter-subs', JSON.stringify(subs.concat(val))); } catch (e) {}
+      if (inp) inp.value = '';
+      this.setState((s) => ({ msgs: { ...s.msgs, [id]: 'ok' } }));
+    };
+    const msg = (id) => {
+      const st = this.state.msgs[id];
+      if (st === 'err') return T('Please enter a valid email address.');
+      if (st === 'dup') return T('This address is already signed up.');
+      if (st === 'ok') return T('Almost done: send the pre-filled email and the agent adds you to the next issue.');
+      return '';
+    };
+    const msgColor = (id) => (this.state.msgs[id] === 'err' ? '#e10600' : '#2ecc71');
+    const sendContact = () => {
+      const name = (document.getElementById('contact-name') || {}).value || '';
+      const email = (document.getElementById('contact-email') || {}).value || '';
+      const message = (document.getElementById('contact-message') || {}).value || '';
+      if (!message.trim()) {
+        this.setState((s) => ({ msgs: { ...s.msgs, contact: 'err' } }));
+        return;
+      }
+      const subject = 'Portfolio message' + (name.trim() ? ' from ' + name.trim() : '');
+      const body = message.trim() + '\n\n' + (name.trim() ? name.trim() + '\n' : '') + (email.trim() ? email.trim() : '');
+      window.location.href = 'mailto:selina.meusel@icloud.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      this.setState((s) => ({ msgs: { ...s.msgs, contact: 'ok' } }));
+    };
+    const contactState = this.state.msgs.contact;
+    return {
+      signup1: mk(1),
+      msg1: msg(1),
+      msg1Color: msgColor(1),
+      sendContact,
+      contactMsg: contactState === 'err' ? T('Please write a message first.') : contactState === 'ok' ? T('Thanks! Your email is ready, just hit send.') : '',
+      contactMsgColor: contactState === 'err' ? '#e10600' : '#2ecc71',
+      setLangEn: () => setLang('en'),
+      setLangDe: () => setLang('de'),
+      setLangZh: () => setLang('zh'),
+      langEnBg: bg('en'), langEnColor: col('en'),
+      langDeBg: bg('de'), langDeColor: col('de'),
+      langZhBg: bg('zh'), langZhColor: col('zh'),
+    };
+  }
+}
+</script>
+</body>
+</html>
