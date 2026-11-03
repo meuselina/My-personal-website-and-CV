@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Selina's Review of the Week — July 19, 2026</title>
 <style>
-  /* ===== Basis ===== */
+  /* ===== Base ===== */
   body {
     margin: 0;
     padding: 0;
@@ -16,7 +16,7 @@
   }
   .wrapper { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
 
-  /* ===== Header mit schwebenden Formen ===== */
+  /* ===== Header with floating shapes ===== */
   .header {
     position: relative;
     text-align: center;
@@ -63,7 +63,7 @@
     font-size: 16.5px; line-height: 1.7;
   }
 
-  /* ===== Börsenticker ===== */
+  /* ===== Stock ticker ===== */
   .ticker {
     overflow: hidden;
     background: #2b2b2b;
@@ -91,13 +91,13 @@
   .up   { color: #7ddba3; font-weight: bold; }
   .down { color: #f2917e; font-weight: bold; }
 
-  /* ===== Pinterest-Grid ===== */
+  /* ===== Pinterest grid ===== */
   .grid { column-count: 2; column-gap: 24px; }
   @media (max-width: 680px) {
     .grid { column-count: 1; }
   }
 
-  /* ===== Karten ===== */
+  /* ===== Cards ===== */
   .story {
     display: inline-block;
     width: 100%;
@@ -180,7 +180,7 @@
     color: #b0492f; display: block; margin-bottom: 4px;
   }
 
-  /* ===== Abschluss ===== */
+  /* ===== Closing ===== */
   .signoff {
     max-width: 640px;
     margin: 32px auto 0;
@@ -251,7 +251,7 @@
     Hi, it's me — Selina. ☕ This week gave us whiplash: a border fence came down in Europe while bridges came down in the Gulf, Britain got yet another prime minister, and the AI world crammed a full year of announcements into five days. Grab your coffee. Let's go.
   </p>
 
-  <!-- Börsenticker -->
+  <!-- Stock ticker -->
   <div class="ticker">
     <div class="ticker-track">
       <span>WTI OIL <b class="up">▲ $80+</b></span>
@@ -529,7 +529,7 @@
 </div>
 
 <script>
-  /* Karten einblenden, sobald sie ins Bild scrollen */
+  /* Fade cards in as soon as they scroll into view */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -541,7 +541,7 @@
 
   document.querySelectorAll('.story, .signoff').forEach((el) => observer.observe(el));
 
-  /* 3D-Tilt: Karten neigen sich zur Maus */
+  /* 3D tilt: cards lean towards the mouse */
   document.querySelectorAll('.story').forEach((card) => {
     card.addEventListener('mousemove', (e) => {
       const rect = card.getBoundingClientRect();
