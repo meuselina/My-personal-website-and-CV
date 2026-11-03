@@ -1,6 +1,6 @@
 # Selina Meusel · Personal Website
 
-My personal portfolio website. **Live:** [selinameusel.netlify.app](https://selinameusel.netlify.app)
+My personal portfolio website. **Live:** [selinameusel.com](https://selinameusel.com)
 
 ## Features
 
