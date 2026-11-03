@@ -1,6 +1,6 @@
-# Projekt-Regeln
+# Project rules
 
-- Keine Gedankenstriche („—" / " — " / "——") in Texten verwenden — weder in Deutsch, Englisch noch Chinesisch. Stattdessen Komma, Doppelpunkt, Punkt oder „·" als Trenner in Labels.
-- Website ist dreisprachig (EN/DE/ZH): Englischer Text im HTML ist die Quelle, translations.js liefert DE/ZH. Bei Textänderungen immer alle drei Sprachen pflegen (Key in translations.js muss exakt dem englischen HTML-Text entsprechen).
-- Motivation/About: Die Coaching-Praxis nur beiläufig erwähnen, nicht als Kern der Motivation. Informatik-Interesse stammt aus dem Informatik-Leistungskurs (Schule), in San Francisco wiederbelebt; Psychologie-Interesse durch Au-pair-Jahr (elterliche Erziehungsmuster und ihre Wirkung auf Kinder).
-- Formulierungen, die nach KI klingen (z.B. „San Francisco war mein Klassenzimmer"), vermeiden.
+- Do not use em dashes ("—" / " — " / "——") in any text, whether German, English or Chinese. Use a comma, colon, period or "·" as a separator in labels instead.
+- The website is trilingual (EN/DE/ZH): the English text in the HTML is the source, translations.js provides DE/ZH. When changing text, always update all three languages (the key in translations.js must match the English HTML text exactly).
+- Motivation/About: mention the coaching practice only in passing, not as the core of the motivation. The interest in computer science comes from the advanced computer science course at school and was revived in San Francisco; the interest in psychology comes from the au pair year (parenting patterns and their effect on children).
+- Avoid phrasing that sounds AI-written (e.g. "San Francisco was my classroom").

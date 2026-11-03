@@ -20,8 +20,8 @@
 <script src="./translations.js"></script>
 <script src="./newsletter-issues.js"></script>
 <script>
-  // Fonts werden erst NACH dem window-load-Event injiziert: ein haengender
-  // CDN-Abruf kann das load-Event so nie blockieren (Fonts swappen per FOUT ein).
+  // Fonts are only injected AFTER the window load event, so a hanging
+  // CDN request can never block the load event (fonts swap in via FOUT).
   (function () {
     var inject = function () {
       var l = document.createElement('link');
@@ -132,7 +132,7 @@
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   renderVals() {
-    // Aktuelle Ausgabe plus die letzten drei
+    // Current issue plus the last three
     return { issues: (window.SM_NEWSLETTER || []).slice(0, 4) };
   }
 
@@ -175,7 +175,7 @@ class Component extends DCLogic {
     this._bindHeader();
     this._bindMobileNav();
     setTimeout(() => this._bindMobileNav(), 600);
-    // Ausgaben nachrendern, falls newsletter-issues.js beim ersten Render noch nicht geladen war
+    // Re-render the issues in case newsletter-issues.js was not loaded yet on the first render
     let tries = 0;
     const poll = () => {
       if (window.SM_NEWSLETTER) {
@@ -280,8 +280,8 @@ class Component extends DCLogic {
         if ((node.nodeValue || '') !== next) node.nodeValue = next;
       }
     };
-    // Regionen zum Uebersetzen kurz aus dem DOM aushaengen (wenige childList-
-    // statt hunderter characterData-Mutationen, verhindert Beobachter-Stalls)
+    // Briefly detach the regions from the DOM while translating (a few childList
+    // mutations instead of hundreds of characterData ones, avoids observer stalls)
     const regions = [...document.querySelectorAll('header, main > *')];
     for (const region of regions) {
       const parent = region.parentNode;
@@ -300,8 +300,8 @@ class Component extends DCLogic {
     this._applyIssueLang();
   }
 
-  // Ausgaben-Inhalt folgt der Seitensprache: DE zeigt die deutsche Version, EN/中文 die englische.
-  // Aeltere Ausgaben (Index > 0) sind eingeklappt, bis ihre Kopfzeile angeklickt wird.
+  // Issue content follows the page language: DE shows the German version, EN/中文 the English one.
+  // Older issues (index > 0) stay collapsed until their header is clicked.
   _applyIssueLang() {
     const l = this._getLang() === 'de' ? 'de' : 'en';
     document.querySelectorAll('[data-nl-lang]').forEach((el) => {

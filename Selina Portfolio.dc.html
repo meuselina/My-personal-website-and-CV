@@ -19,9 +19,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <script src="./translations.js"></script>
 <script>
-  // Externe Ressourcen (Fonts, three.js) werden erst NACH dem window-load-Event
-  // injiziert: ein haengender CDN-Abruf kann das load-Event so nie blockieren
-  // (_setup3D pollt auf window.THREE; Fonts swappen per FOUT ein).
+  // External resources (fonts, three.js) are only injected AFTER the window load
+  // event, so a hanging CDN request can never block the load event
+  // (_setup3D polls for window.THREE; fonts swap in via FOUT).
   (function () {
     var inject = function () {
       var l = document.createElement('link');

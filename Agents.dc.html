@@ -19,8 +19,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <script src="./translations.js"></script>
 <script>
-  // Fonts werden erst NACH dem window-load-Event injiziert: ein haengender
-  // CDN-Abruf kann das load-Event so nie blockieren (Fonts swappen per FOUT ein).
+  // Fonts are only injected AFTER the window load event, so a hanging
+  // CDN request can never block the load event (fonts swap in via FOUT).
   (function () {
     var inject = function () {
       var l = document.createElement('link');
@@ -523,8 +523,8 @@ class Component extends DCLogic {
         this.setState((s) => ({ msgs: { ...s.msgs, [id]: 'dup' } }));
         return;
       }
-      // Maschinenlesbares Format: der Newsletter-Agent parst Betreff/Body und
-      // nimmt die Adresse automatisch in seine Empfaengerliste auf.
+      // Machine-readable format: the newsletter agent parses subject/body and
+      // automatically adds the address to its recipient list.
       const ed = this._getEdition();
       const subject = 'NEWSLETTER SIGNUP: ' + val;
       const body = 'action: subscribe\nlist: weekly-newsletter\nemail: ' + val + '\nlanguage: ' + ed + '\nsource: portfolio-website\n\n(Automated signup from the Weekly Newsletter Agent page. Add this address to the newsletter distribution list.)';
